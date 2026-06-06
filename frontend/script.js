@@ -49,6 +49,8 @@ function handleFile(event) {
   const file = event.target.files[0];
   if (!file) return;
   document.getElementById('file-name').textContent = '已选择：' + file.name;
+  document.getElementById('upload-area').classList.add('uploaded');
+  document.getElementById('upload-area').querySelector('p').textContent = '✅ ' + file.name;
   const reader = new FileReader();
   reader.onload = (e) => { fileText = e.target.result; };
   reader.readAsText(file, 'UTF-8');
