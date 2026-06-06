@@ -19,7 +19,7 @@ class NovelInput(BaseModel):
 @app.post("/convert")
 async def convert(input: NovelInput):
     client = OpenAI(
-        api_key=os.environ.get("ALIBABA_API_KEY"),
+        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
     

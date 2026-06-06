@@ -1,6 +1,7 @@
 function goTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(page + '-page').classList.add('active');
+  if (page === 'library') renderLibrary();
 }
 
 let selectedStyle = '';
@@ -29,6 +30,18 @@ function selectStyle(btn, style) {
     welcomePage.classList.add('theme-tv');
     overlay.classList.remove('active');
   }
+  const toggle = document.getElementById('sidebar-toggle');
+  if (style === '电影剧本') {
+  toggle.style.color = '#2a1800';
+  toggle.style.borderColor = 'rgba(42,24,0,0.4)';
+  } else if (style === '舞台剧本') {
+  toggle.style.color = '#ffddcc';
+  toggle.style.borderColor = 'rgba(255,221,204,0.4)';
+  } else if (style === '电视剧本') {
+  toggle.style.color = '#a0c4ff';
+  toggle.style.borderColor = 'rgba(160,196,255,0.4)';
+}
+  
 }
 
 async function convertText() {
@@ -197,3 +210,192 @@ function showWelcomeModal(msg) {
 function closeWelcomeModal() {
   document.getElementById('welcome-modal').classList.remove('show');
 }
+// ===== 剧本库 =====
+function getLibrary() {
+  return JSON.parse(localStorage.getItem('scriptLibrary') || '{"folders":{},"scripts":[]}');
+}
+
+function saveLibrary(lib) {
+  localStorage.setItem('scriptLibrary', JSON.stringify(lib));
+}
+
+function saveScript() {
+  const content = document.getElementById('output-content').textContent;
+  if (content === '转换结果将显示在这里...') { showModal('请先生成剧本！'); return; }
+  document.getElementById('save-modal').classList.add('show');
+}
+
+function closeSaveModal() {
+  document.getElementById('save-modal').classList.remove('show');
+}
+
+function saveToDevice() {
+  const content = document.getElementById('output-content').textContent;
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '剧本_' + new Date().toLocaleDateString() + '.txt';
+  a.click();
+  closeSaveModal();
+}
+
+let _pendingContent = '';
+let _pendingStyle = '';
+let _pendingSource = '';
+
+function saveToLibrary() {
+  closeSaveModal();
+  _pendingContent = document.getElementById('output-content').textContent;
+  _pendingStyle = selectedStyle;
+  _pendingSource = 'text';
+  document.getElementById('script-name-input').value = '';
+  document.getElementById('name-modal').classList.add('show');
+}
+
+function saveFileScript() {
+  const content = document.getElementById('file-output-content').textContent;
+  if (content === '转换结果将显示在这里...') { showFileModal('请先生成剧本！'); return; }
+  _pendingContent = content;
+  _pendingStyle = selectedStyle;
+  _pendingSource = 'file';
+  document.getElementById('script-name-input').value = '';
+  document.getElementById('name-modal').classList.add('show');
+}
+
+function confirmSaveName() {
+  const name = document.getElementById('script-name-input').value.trim() || '未命名剧本_' + new Date().toLocaleDateString();
+  const lib = getLibrary();
+  lib.scripts.push({
+    id: Date.now(),
+    name: name,
+    content: _pendingContent,
+    style: _pendingStyle,
+    date: new Date().toLocaleString(),
+    folder: null
+  });
+  saveLibrary(lib);
+  closeNameModal();
+  showModal('剧本已保存到剧本库！');
+}
+
+function closeNameModal() {
+  document.getElementById('name-modal').classList.remove('show');
+}
+function createFolder() {
+  const name = prompt('文件夹名称：');
+  if (!name) return;
+  const lib = getLibrary();
+  lib.folders[name] = [];
+  saveLibrary(lib);
+  renderLibrary();
+}
+
+let currentFolder = null;
+
+function renderLibrary() {
+  const lib = getLibrary();
+  const container = document.getElementById('library-content');
+  const pathEl = document.getElementById('current-path');
+  let html = '';
+
+  if (currentFolder === null) {
+    pathEl.textContent = '全部剧本';
+    // 显示文件夹
+    Object.keys(lib.folders).forEach(fname => {
+      const count = lib.scripts.filter(s => s.folder === fname).length;
+      html += `
+        <div class="lib-folder" onclick="openFolder('${fname}')">
+          <span class="lib-icon">📁</span>
+          <span class="lib-name">${fname}</span>
+          <span class="lib-meta">${count} 个剧本</span>
+        </div>`;
+    });
+    // 显示未分类剧本
+    lib.scripts.filter(s => !s.folder).forEach(s => {
+      html += renderScriptItem(s);
+    });
+  } else {
+    pathEl.textContent = currentFolder;
+    html += `<div class="lib-back" onclick="closeFolder()">← 返回</div>`;
+    lib.scripts.filter(s => s.folder === currentFolder).forEach(s => {
+      html += renderScriptItem(s);
+    });
+  }
+
+  if (!html) html = '<div class="lib-empty">还没有保存的剧本</div>';
+  container.innerHTML = html;
+}
+
+function renderScriptItem(s) {
+  return `
+    <div class="lib-script">
+      <div class="lib-script-header">
+        <span class="lib-icon">📄</span>
+        <span class="lib-name">${s.name}</span>
+        <span class="lib-meta">${s.style || ''} · ${s.date}</span>
+      </div>
+      <div class="lib-script-actions">
+        <button onclick="viewScript(${s.id})">查看</button>
+        <button onclick="moveScript(${s.id})">移动</button>
+        <button onclick="deleteScript(${s.id})">删除</button>
+      </div>
+    </div>`;
+}
+
+function openFolder(name) {
+  currentFolder = name;
+  renderLibrary();
+}
+
+function closeFolder() {
+  currentFolder = null;
+  renderLibrary();
+}
+
+function viewScript(id) {
+  const lib = getLibrary();
+  const s = lib.scripts.find(s => s.id === id);
+  if (!s) return;
+  alert(s.content);
+}
+
+function moveScript(id) {
+  const lib = getLibrary();
+  const folders = Object.keys(lib.folders);
+  if (!folders.length) { alert('请先创建文件夹！'); return; }
+  const fname = prompt('移动到哪个文件夹？\n' + folders.join('\n'));
+  if (!fname || !lib.folders.hasOwnProperty(fname)) return;
+  const s = lib.scripts.find(s => s.id === id);
+  if (s) s.folder = fname;
+  saveLibrary(lib);
+  renderLibrary();
+}
+
+function deleteScript(id) {
+  if (!confirm('确认删除？')) return;
+  const lib = getLibrary();
+  lib.scripts = lib.scripts.filter(s => s.id !== id);
+  saveLibrary(lib);
+  renderLibrary();
+}
+
+function showDrawer() {
+  document.getElementById('bottom-drawer').classList.add('open');
+}
+
+function hideDrawer() {
+  document.getElementById('bottom-drawer').classList.remove('open');
+}
+
+document.addEventListener('mousemove', (e) => {
+  if (e.clientY > window.innerHeight - 60) {
+    showDrawer();
+  }
+});
+
+document.getElementById('bottom-drawer').addEventListener('mouseleave', (e) => {
+  if (e.clientY < window.innerHeight - 60) {
+    hideDrawer();
+  }
+});
+

@@ -5,141 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scriptcraft</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <div id="welcome-page" class="page active">
     <svg class="film-strip-left" viewBox="0 0 80 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="wave-left">
-          <feTurbulence type="fractalNoise" baseFrequency="0.02 0" numOctaves="1" result="noise"/>
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G"/>
-        </filter>
-      </defs>
       <rect width="80" height="900" fill="#4a2e08"/>
       <g fill="#e8dfc0">
-        <rect x="8" y="10" width="14" height="22" rx="2"/>
-        <rect x="58" y="10" width="14" height="22" rx="2"/>
-        <rect x="8" y="42" width="14" height="22" rx="2"/>
-        <rect x="58" y="42" width="14" height="22" rx="2"/>
-        <rect x="8" y="74" width="14" height="22" rx="2"/>
-        <rect x="58" y="74" width="14" height="22" rx="2"/>
-        <rect x="8" y="106" width="14" height="22" rx="2"/>
-        <rect x="58" y="106" width="14" height="22" rx="2"/>
-        <rect x="8" y="138" width="14" height="22" rx="2"/>
-        <rect x="58" y="138" width="14" height="22" rx="2"/>
-        <rect x="8" y="170" width="14" height="22" rx="2"/>
-        <rect x="58" y="170" width="14" height="22" rx="2"/>
-        <rect x="8" y="202" width="14" height="22" rx="2"/>
-        <rect x="58" y="202" width="14" height="22" rx="2"/>
-        <rect x="8" y="234" width="14" height="22" rx="2"/>
-        <rect x="58" y="234" width="14" height="22" rx="2"/>
-        <rect x="8" y="266" width="14" height="22" rx="2"/>
-        <rect x="58" y="266" width="14" height="22" rx="2"/>
-        <rect x="8" y="298" width="14" height="22" rx="2"/>
-        <rect x="58" y="298" width="14" height="22" rx="2"/>
-        <rect x="8" y="330" width="14" height="22" rx="2"/>
-        <rect x="58" y="330" width="14" height="22" rx="2"/>
-        <rect x="8" y="362" width="14" height="22" rx="2"/>
-        <rect x="58" y="362" width="14" height="22" rx="2"/>
-        <rect x="8" y="394" width="14" height="22" rx="2"/>
-        <rect x="58" y="394" width="14" height="22" rx="2"/>
-        <rect x="8" y="426" width="14" height="22" rx="2"/>
-        <rect x="58" y="426" width="14" height="22" rx="2"/>
-        <rect x="8" y="458" width="14" height="22" rx="2"/>
-        <rect x="58" y="458" width="14" height="22" rx="2"/>
-        <rect x="8" y="490" width="14" height="22" rx="2"/>
-        <rect x="58" y="490" width="14" height="22" rx="2"/>
-        <rect x="8" y="522" width="14" height="22" rx="2"/>
-        <rect x="58" y="522" width="14" height="22" rx="2"/>
-        <rect x="8" y="554" width="14" height="22" rx="2"/>
-        <rect x="58" y="554" width="14" height="22" rx="2"/>
-        <rect x="8" y="586" width="14" height="22" rx="2"/>
-        <rect x="58" y="586" width="14" height="22" rx="2"/>
-        <rect x="8" y="618" width="14" height="22" rx="2"/>
-        <rect x="58" y="618" width="14" height="22" rx="2"/>
-        <rect x="8" y="650" width="14" height="22" rx="2"/>
-        <rect x="58" y="650" width="14" height="22" rx="2"/>
-        <rect x="8" y="682" width="14" height="22" rx="2"/>
-        <rect x="58" y="682" width="14" height="22" rx="2"/>
-        <rect x="8" y="714" width="14" height="22" rx="2"/>
-        <rect x="58" y="714" width="14" height="22" rx="2"/>
-        <rect x="8" y="746" width="14" height="22" rx="2"/>
-        <rect x="58" y="746" width="14" height="22" rx="2"/>
-        <rect x="8" y="778" width="14" height="22" rx="2"/>
-        <rect x="58" y="778" width="14" height="22" rx="2"/>
-        <rect x="8" y="810" width="14" height="22" rx="2"/>
-        <rect x="58" y="810" width="14" height="22" rx="2"/>
-        <rect x="8" y="842" width="14" height="22" rx="2"/>
-        <rect x="58" y="842" width="14" height="22" rx="2"/>
-        <rect x="8" y="874" width="14" height="22" rx="2"/>
-        <rect x="58" y="874" width="14" height="22" rx="2"/>
+        <rect x="8" y="10" width="14" height="22" rx="2"/><rect x="58" y="10" width="14" height="22" rx="2"/>
+        <rect x="8" y="42" width="14" height="22" rx="2"/><rect x="58" y="42" width="14" height="22" rx="2"/>
+        <rect x="8" y="74" width="14" height="22" rx="2"/><rect x="58" y="74" width="14" height="22" rx="2"/>
+        <rect x="8" y="106" width="14" height="22" rx="2"/><rect x="58" y="106" width="14" height="22" rx="2"/>
+        <rect x="8" y="138" width="14" height="22" rx="2"/><rect x="58" y="138" width="14" height="22" rx="2"/>
+        <rect x="8" y="170" width="14" height="22" rx="2"/><rect x="58" y="170" width="14" height="22" rx="2"/>
+        <rect x="8" y="202" width="14" height="22" rx="2"/><rect x="58" y="202" width="14" height="22" rx="2"/>
+        <rect x="8" y="234" width="14" height="22" rx="2"/><rect x="58" y="234" width="14" height="22" rx="2"/>
+        <rect x="8" y="266" width="14" height="22" rx="2"/><rect x="58" y="266" width="14" height="22" rx="2"/>
+        <rect x="8" y="298" width="14" height="22" rx="2"/><rect x="58" y="298" width="14" height="22" rx="2"/>
+        <rect x="8" y="330" width="14" height="22" rx="2"/><rect x="58" y="330" width="14" height="22" rx="2"/>
+        <rect x="8" y="362" width="14" height="22" rx="2"/><rect x="58" y="362" width="14" height="22" rx="2"/>
+        <rect x="8" y="394" width="14" height="22" rx="2"/><rect x="58" y="394" width="14" height="22" rx="2"/>
+        <rect x="8" y="426" width="14" height="22" rx="2"/><rect x="58" y="426" width="14" height="22" rx="2"/>
+        <rect x="8" y="458" width="14" height="22" rx="2"/><rect x="58" y="458" width="14" height="22" rx="2"/>
+        <rect x="8" y="490" width="14" height="22" rx="2"/><rect x="58" y="490" width="14" height="22" rx="2"/>
+        <rect x="8" y="522" width="14" height="22" rx="2"/><rect x="58" y="522" width="14" height="22" rx="2"/>
+        <rect x="8" y="554" width="14" height="22" rx="2"/><rect x="58" y="554" width="14" height="22" rx="2"/>
+        <rect x="8" y="586" width="14" height="22" rx="2"/><rect x="58" y="586" width="14" height="22" rx="2"/>
+        <rect x="8" y="618" width="14" height="22" rx="2"/><rect x="58" y="618" width="14" height="22" rx="2"/>
+        <rect x="8" y="650" width="14" height="22" rx="2"/><rect x="58" y="650" width="14" height="22" rx="2"/>
+        <rect x="8" y="682" width="14" height="22" rx="2"/><rect x="58" y="682" width="14" height="22" rx="2"/>
+        <rect x="8" y="714" width="14" height="22" rx="2"/><rect x="58" y="714" width="14" height="22" rx="2"/>
+        <rect x="8" y="746" width="14" height="22" rx="2"/><rect x="58" y="746" width="14" height="22" rx="2"/>
+        <rect x="8" y="778" width="14" height="22" rx="2"/><rect x="58" y="778" width="14" height="22" rx="2"/>
+        <rect x="8" y="810" width="14" height="22" rx="2"/><rect x="58" y="810" width="14" height="22" rx="2"/>
+        <rect x="8" y="842" width="14" height="22" rx="2"/><rect x="58" y="842" width="14" height="22" rx="2"/>
+        <rect x="8" y="874" width="14" height="22" rx="2"/><rect x="58" y="874" width="14" height="22" rx="2"/>
       </g>
     </svg>
     <svg class="film-strip-right" viewBox="0 0 80 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="80" height="900" fill="#4a2e08"/>
       <g fill="#e8dfc0">
-        <rect x="8" y="10" width="14" height="22" rx="2"/>
-        <rect x="58" y="10" width="14" height="22" rx="2"/>
-        <rect x="8" y="42" width="14" height="22" rx="2"/>
-        <rect x="58" y="42" width="14" height="22" rx="2"/>
-        <rect x="8" y="74" width="14" height="22" rx="2"/>
-        <rect x="58" y="74" width="14" height="22" rx="2"/>
-        <rect x="8" y="106" width="14" height="22" rx="2"/>
-        <rect x="58" y="106" width="14" height="22" rx="2"/>
-        <rect x="8" y="138" width="14" height="22" rx="2"/>
-        <rect x="58" y="138" width="14" height="22" rx="2"/>
-        <rect x="8" y="170" width="14" height="22" rx="2"/>
-        <rect x="58" y="170" width="14" height="22" rx="2"/>
-        <rect x="8" y="202" width="14" height="22" rx="2"/>
-        <rect x="58" y="202" width="14" height="22" rx="2"/>
-        <rect x="8" y="234" width="14" height="22" rx="2"/>
-        <rect x="58" y="234" width="14" height="22" rx="2"/>
-        <rect x="8" y="266" width="14" height="22" rx="2"/>
-        <rect x="58" y="266" width="14" height="22" rx="2"/>
-        <rect x="8" y="298" width="14" height="22" rx="2"/>
-        <rect x="58" y="298" width="14" height="22" rx="2"/>
-        <rect x="8" y="330" width="14" height="22" rx="2"/>
-        <rect x="58" y="330" width="14" height="22" rx="2"/>
-        <rect x="8" y="362" width="14" height="22" rx="2"/>
-        <rect x="58" y="362" width="14" height="22" rx="2"/>
-        <rect x="8" y="394" width="14" height="22" rx="2"/>
-        <rect x="58" y="394" width="14" height="22" rx="2"/>
-        <rect x="8" y="426" width="14" height="22" rx="2"/>
-        <rect x="58" y="426" width="14" height="22" rx="2"/>
-        <rect x="8" y="458" width="14" height="22" rx="2"/>
-        <rect x="58" y="458" width="14" height="22" rx="2"/>
-        <rect x="8" y="490" width="14" height="22" rx="2"/>
-        <rect x="58" y="490" width="14" height="22" rx="2"/>
-        <rect x="8" y="522" width="14" height="22" rx="2"/>
-        <rect x="58" y="522" width="14" height="22" rx="2"/>
-        <rect x="8" y="554" width="14" height="22" rx="2"/>
-        <rect x="58" y="554" width="14" height="22" rx="2"/>
-        <rect x="8" y="586" width="14" height="22" rx="2"/>
-        <rect x="58" y="586" width="14" height="22" rx="2"/>
-        <rect x="8" y="618" width="14" height="22" rx="2"/>
-        <rect x="58" y="618" width="14" height="22" rx="2"/>
-        <rect x="8" y="650" width="14" height="22" rx="2"/>
-        <rect x="58" y="650" width="14" height="22" rx="2"/>
-        <rect x="8" y="682" width="14" height="22" rx="2"/>
-        <rect x="58" y="682" width="14" height="22" rx="2"/>
-        <rect x="8" y="714" width="14" height="22" rx="2"/>
-        <rect x="58" y="714" width="14" height="22" rx="2"/>
-        <rect x="8" y="746" width="14" height="22" rx="2"/>
-        <rect x="58" y="746" width="14" height="22" rx="2"/>
-        <rect x="8" y="778" width="14" height="22" rx="2"/>
-        <rect x="58" y="778" width="14" height="22" rx="2"/>
-        <rect x="8" y="810" width="14" height="22" rx="2"/>
-        <rect x="58" y="810" width="14" height="22" rx="2"/>
-        <rect x="8" y="842" width="14" height="22" rx="2"/>
-        <rect x="58" y="842" width="14" height="22" rx="2"/>
-        <rect x="8" y="874" width="14" height="22" rx="2"/>
-        <rect x="58" y="874" width="14" height="22" rx="2"/>
+        <rect x="8" y="10" width="14" height="22" rx="2"/><rect x="58" y="10" width="14" height="22" rx="2"/>
+        <rect x="8" y="42" width="14" height="22" rx="2"/><rect x="58" y="42" width="14" height="22" rx="2"/>
+        <rect x="8" y="74" width="14" height="22" rx="2"/><rect x="58" y="74" width="14" height="22" rx="2"/>
+        <rect x="8" y="106" width="14" height="22" rx="2"/><rect x="58" y="106" width="14" height="22" rx="2"/>
+        <rect x="8" y="138" width="14" height="22" rx="2"/><rect x="58" y="138" width="14" height="22" rx="2"/>
+        <rect x="8" y="170" width="14" height="22" rx="2"/><rect x="58" y="170" width="14" height="22" rx="2"/>
+        <rect x="8" y="202" width="14" height="22" rx="2"/><rect x="58" y="202" width="14" height="22" rx="2"/>
+        <rect x="8" y="234" width="14" height="22" rx="2"/><rect x="58" y="234" width="14" height="22" rx="2"/>
+        <rect x="8" y="266" width="14" height="22" rx="2"/><rect x="58" y="266" width="14" height="22" rx="2"/>
+        <rect x="8" y="298" width="14" height="22" rx="2"/><rect x="58" y="298" width="14" height="22" rx="2"/>
+        <rect x="8" y="330" width="14" height="22" rx="2"/><rect x="58" y="330" width="14" height="22" rx="2"/>
+        <rect x="8" y="362" width="14" height="22" rx="2"/><rect x="58" y="362" width="14" height="22" rx="2"/>
+        <rect x="8" y="394" width="14" height="22" rx="2"/><rect x="58" y="394" width="14" height="22" rx="2"/>
+        <rect x="8" y="426" width="14" height="22" rx="2"/><rect x="58" y="426" width="14" height="22" rx="2"/>
+        <rect x="8" y="458" width="14" height="22" rx="2"/><rect x="58" y="458" width="14" height="22" rx="2"/>
+        <rect x="8" y="490" width="14" height="22" rx="2"/><rect x="58" y="490" width="14" height="22" rx="2"/>
+        <rect x="8" y="522" width="14" height="22" rx="2"/><rect x="58" y="522" width="14" height="22" rx="2"/>
+        <rect x="8" y="554" width="14" height="22" rx="2"/><rect x="58" y="554" width="14" height="22" rx="2"/>
+        <rect x="8" y="586" width="14" height="22" rx="2"/><rect x="58" y="586" width="14" height="22" rx="2"/>
+        <rect x="8" y="618" width="14" height="22" rx="2"/><rect x="58" y="618" width="14" height="22" rx="2"/>
+        <rect x="8" y="650" width="14" height="22" rx="2"/><rect x="58" y="650" width="14" height="22" rx="2"/>
+        <rect x="8" y="682" width="14" height="22" rx="2"/><rect x="58" y="682" width="14" height="22" rx="2"/>
+        <rect x="8" y="714" width="14" height="22" rx="2"/><rect x="58" y="714" width="14" height="22" rx="2"/>
+        <rect x="8" y="746" width="14" height="22" rx="2"/><rect x="58" y="746" width="14" height="22" rx="2"/>
+        <rect x="8" y="778" width="14" height="22" rx="2"/><rect x="58" y="778" width="14" height="22" rx="2"/>
+        <rect x="8" y="810" width="14" height="22" rx="2"/><rect x="58" y="810" width="14" height="22" rx="2"/>
+        <rect x="8" y="842" width="14" height="22" rx="2"/><rect x="58" y="842" width="14" height="22" rx="2"/>
+        <rect x="8" y="874" width="14" height="22" rx="2"/><rect x="58" y="874" width="14" height="22" rx="2"/>
       </g>
     </svg>
     <div class="welcome-container">
-      <h1>✍️ Scriptcraft</h1>
-      <p>AI 驱动的小说转剧本工具</p>
+      <h1> Scriptcraft</h1>
       <p class="section-label">选择剧本风格</p>
       <div class="style-btns">
         <button class="style-btn" onclick="selectStyle(this, '电影剧本')">
@@ -161,24 +99,19 @@
       <button class="next-btn" onclick="checkStyleAndNext()">下一步 →</button>
     </div>
     <div class="spotlight-overlay" id="spotlight-overlay">
-    <div class="spotlight-beam" id="spotlight-beam">
+      <div class="spotlight-beam" id="spotlight-beam"></div>
     </div>
-</div>
-
-<div class="modal-overlay" id="welcome-modal">
-    <div class="modal-box">
+    <div class="modal-overlay" id="welcome-modal">
+      <div class="modal-box">
         <p id="welcome-modal-msg">提示</p>
-        <button class="modal-confirm" onclick="closeWelcomeModal()">
-            确认
-        </button>
+        <button class="modal-confirm" onclick="closeWelcomeModal()">确认</button>
+      </div>
     </div>
-</div>
-</div>
-
+  </div>
 
   <div id="input-select-page" class="page">
     <div class="welcome-container">
-      <h1>✍️ Scriptcraft</h1>
+      <h1>Scriptcraft</h1>
       <p class="section-label">选择输入方式</p>
       <div class="choose-btns">
         <button class="choose-btn" onclick="goTo('text')">
@@ -213,7 +146,10 @@
       <div id="output-panel">
         <div class="panel-header">
           <h2>剧本输出</h2>
-          <button id="copy-btn" onclick="copyOutput()">复制</button>
+          <div class="panel-actions">
+            <button id="copy-btn" onclick="copyOutput()">复制</button>
+            <button id="save-btn" onclick="saveScript()">保存</button>
+          </div>
         </div>
         <pre id="output-content">转换结果将显示在这里...</pre>
         <div id="edit-area">
@@ -222,6 +158,26 @@
         </div>
       </div>
     </main>
+    <div class="modal-overlay" id="name-modal">
+      <div class="modal-box">
+        <p>给剧本起个名字</p>
+        <input type="text" id="script-name-input" placeholder="未命名剧本" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;margin-bottom:16px;outline:none;font-family:'Microsoft YaHei',sans-serif;">
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button class="modal-confirm" onclick="confirmSaveName()">确认</button>
+          <button style="background:#e0e0e0;color:#333;" class="modal-confirm" onclick="closeNameModal()">取消</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="save-modal">
+      <div class="modal-box">
+        <p>选择保存方式</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <button class="modal-confirm" onclick="saveToDevice()">💾 保存到设备</button>
+          <button class="modal-confirm" onclick="saveToLibrary(); closeSaveModal()">📚 保存到剧本库</button>
+          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeSaveModal()">取消</button>
+        </div>
+      </div>
+    </div>
     <div class="modal-overlay" id="modal">
       <div class="modal-box">
         <p id="modal-msg">提示</p>
@@ -252,7 +208,10 @@
       <div id="file-output-panel">
         <div class="panel-header">
           <h2>剧本输出</h2>
-          <button id="file-copy-btn" onclick="copyFileOutput()">复制</button>
+          <div class="panel-actions">
+            <button id="file-copy-btn" onclick="copyFileOutput()">复制</button>
+            <button id="file-save-btn" onclick="saveFileScript()">保存</button>
+          </div>
         </div>
         <pre id="file-output-content">转换结果将显示在这里...</pre>
         <div id="file-edit-area">
@@ -265,6 +224,32 @@
       <div class="modal-box">
         <p id="file-modal-msg">提示</p>
         <button class="modal-confirm" onclick="closeFileModal()">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="library-page" class="page">
+    <button class="back-btn" onclick="goTo('welcome')">← 返回</button>
+    <header>
+      <h1>ScriptCraft</h1>
+      <p>剧本库</p>
+    </header>
+    <div id="library-container">
+      <div id="library-toolbar">
+        <button onclick="createFolder()">📁 新建文件夹</button>
+        <span id="current-path">全部剧本</span>
+      </div>
+      <div id="library-content"></div>
+    </div>
+  </div>
+
+  <div id="bottom-drawer-hint" onclick="showDrawer()"></div>
+  <div id="bottom-drawer">
+    <div class="drawer-handle" onclick="hideDrawer()"></div>
+    <div class="drawer-big-title">Scriptcraft</div>
+    <div class="drawer-content">
+      <div class="drawer-item" onclick="goTo('library'); hideDrawer()">
+        <span>剧本库</span>
       </div>
     </div>
   </div>
