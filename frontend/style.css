@@ -228,17 +228,35 @@ textarea:focus {
 .upload-area {
   border: 2px dashed #7194c6;
   border-radius: 12px;
-  padding: 80px 48px;
+  padding: 60px 48px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   margin-bottom: 12px;
   font-size: 16px;
   color: #6b7280;
+  background: #f8faff;
 }
 
 .upload-area:hover {
-  background: #f0f4ff;
+  background: #e8f0ff;
+  border-color: #4a72b0;
+}
+
+.upload-area.uploaded {
+  border-color: #22c55e;
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.upload-area p {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.upload-area span {
+  font-size: 12px;
+  color: #9ca3af;
 }
 
 .upload-area input {
@@ -249,6 +267,11 @@ textarea:focus {
   font-size: 13px;
   color: #6b7280;
   margin-bottom: 12px;
+}
+
+#file-page main {
+  display: flex;
+  height: calc(100vh - 57px);
 }
 
 #file-input-panel, #file-output-panel {
