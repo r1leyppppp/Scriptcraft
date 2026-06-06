@@ -90,7 +90,7 @@ fileCopyBtn.addEventListener('click', () => {
   setTimeout(() => fileCopyBtn.textContent = '复制', 2000);
 });
 
-    function showModle(msg) {
+    function showModal(msg) {
       document.getElementById('modal-msg').textContent = msg;
       document.getElementById('modal').classList.add('show');
     }
