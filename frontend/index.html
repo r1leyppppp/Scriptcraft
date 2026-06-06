@@ -135,6 +135,32 @@ textarea:focus {
   background: #1f2937;
   color: #ffffff;
 }
+
+#convert-btn {
+  padding: 8px 20px;
+  background: #ffffff;
+  color: #1f2937;
+  border: 1.5px solid #1f2937;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  transition: all 0.2s;
+}
+
+#convert-btn:hover {
+  background: #1f2937;
+  color: #ffffff;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
 </style>
 <body>
 
@@ -152,7 +178,9 @@ textarea:focus {
       </div>
       <textarea id="novel-input" placeholder="在这里粘贴小说原文..."></textarea>
     </div>
-
+    
+    <textarea id="novel-input" placeholder="在这里粘贴小说原文..."></textarea>
+  </div>
     <div id="output-panel">
       <div class="panel-header">
         <h2>剧本输出</h2>
