@@ -3,7 +3,7 @@ function goTo(page) {
   document.getElementById(page + '-page').classList.add('active');
 }
 
-document.getElementById('convert-btn').addEventListener('click', async () => {
+async function convertText() {
   const novelInput = document.getElementById('novel-input');
   const outputContent = document.getElementById('output-content');
   const convertBtn = document.getElementById('convert-btn');
@@ -26,15 +26,15 @@ document.getElementById('convert-btn').addEventListener('click', async () => {
     convertBtn.textContent = '开始转换';
     convertBtn.disabled = false;
   }
-});
+}
 
-document.getElementById('copy-btn').addEventListener('click', () => {
+function copyOutput() {
   const outputContent = document.getElementById('output-content');
   const copyBtn = document.getElementById('copy-btn');
   navigator.clipboard.writeText(outputContent.textContent);
   copyBtn.textContent = '已复制！';
   setTimeout(() => copyBtn.textContent = '复制', 2000);
-});
+}
 
 let fileText = '';
 
@@ -45,14 +45,11 @@ function handleFile(event) {
   document.getElementById('upload-area').classList.add('uploaded');
   document.getElementById('upload-area').querySelector('p').textContent = '✅ ' + file.name;
   const reader = new FileReader();
-  reader.onload = (e) => {
-    fileText = e.target.result;
-    console.log('读取成功：' + fileText.length);
-  };
+  reader.onload = (e) => { fileText = e.target.result; };
   reader.readAsText(file);
 }
 
-document.getElementById('file-convert-btn').addEventListener('click', async () => {
+async function convertFile() {
   const fileOutputContent = document.getElementById('file-output-content');
   const fileConvertBtn = document.getElementById('file-convert-btn');
   if (!fileText) { showFileModal('请先上传文件！'); return; }
@@ -73,15 +70,42 @@ document.getElementById('file-convert-btn').addEventListener('click', async () =
     fileConvertBtn.textContent = '开始转换';
     fileConvertBtn.disabled = false;
   }
-});
+}
 
-document.getElementById('file-copy-btn').addEventListener('click', () => {
+function copyFileOutput() {
   const fileOutputContent = document.getElementById('file-output-content');
   const fileCopyBtn = document.getElementById('file-copy-btn');
   navigator.clipboard.writeText(fileOutputContent.textContent);
   fileCopyBtn.textContent = '已复制！';
   setTimeout(() => fileCopyBtn.textContent = '复制', 2000);
-});
+}
+
+async function editScript() {
+  const editInput = document.getElementById('edit-input');
+  const outputContent = document.getElementById('output-content');
+  const editBtn = document.getElementById('edit-btn');
+  const currentScript = outputContent.textContent;
+  const request = editInput.value.trim();
+  if (!request) { showModal('请输入修改要求！'); return; }
+  if (currentScript === '转换结果将显示在这里...') { showModal('请先生成剧本！'); return; }
+  editBtn.textContent = '修改中...';
+  editBtn.disabled = true;
+  try {
+    const response = await fetch('http://localhost:8000/edit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ script: currentScript, request: request })
+    });
+    const data = await response.json();
+    outputContent.textContent = data.result;
+    editInput.value = '';
+  } catch (error) {
+    showModal('修改失败，请确认后端服务已启动。');
+  } finally {
+    editBtn.textContent = '修改剧本';
+    editBtn.disabled = false;
+  }
+}
 
 function showModal(msg) {
   document.getElementById('modal-msg').textContent = msg;
@@ -99,4 +123,31 @@ function showFileModal(msg) {
 
 function closeFileModal() {
   document.getElementById('file-modal').classList.remove('show');
+}
+
+async function editFileScript() {
+  const editInput = document.getElementById('file-edit-input');
+  const outputContent = document.getElementById('file-output-content');
+  const editBtn = document.getElementById('file-edit-btn');
+  const currentScript = outputContent.textContent;
+  const request = editInput.value.trim();
+  if (!request) { showFileModal('请输入修改要求！'); return; }
+  if (currentScript === '转换结果将显示在这里...') { showFileModal('请先生成剧本！'); return; }
+  editBtn.textContent = '修改中...';
+  editBtn.disabled = true;
+  try {
+    const response = await fetch('http://localhost:8000/edit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ script: currentScript, request: request })
+    });
+    const data = await response.json();
+    outputContent.textContent = data.result;
+    editInput.value = '';
+  } catch (error) {
+    showFileModal('修改失败，请确认后端服务已启动。');
+  } finally {
+    editBtn.textContent = '修改剧本';
+    editBtn.disabled = false;
+  }
 }

@@ -37,16 +37,20 @@
       <div id="input-panel">
         <div class="panel-header">
           <h2>小说输入</h2>
-          <button id="convert-btn">开始转换</button>
+          <button id="convert-btn" onclick="convertText()">开始转换</button>
         </div>
         <textarea id="novel-input" placeholder="在这里粘贴小说原文..."></textarea>
       </div>
       <div id="output-panel">
         <div class="panel-header">
           <h2>剧本输出</h2>
-          <button id="copy-btn">复制</button>
+          <button id="copy-btn" onclick="copyOutput()">复制</button>
         </div>
         <pre id="output-content">转换结果将显示在这里...</pre>
+        <div id="edit-area">
+          <input type="text" id="edit-input" placeholder="输入修改要求，例如：把第一场景改成夜晚...">
+          <button id="edit-btn" onclick="editScript()">修改剧本</button>
+        </div>
       </div>
     </main>
     <div class="modal-overlay" id="modal">
@@ -67,7 +71,7 @@
       <div id="file-input-panel">
         <div class="panel-header">
           <h2>文件上传</h2>
-          <button id="file-convert-btn">开始转换</button>
+          <button id="file-convert-btn" onclick="convertFile()">开始转换</button>
         </div>
         <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
           <p>📂 点击上传 .txt 文件</p>
@@ -79,9 +83,13 @@
       <div id="file-output-panel">
         <div class="panel-header">
           <h2>剧本输出</h2>
-          <button id="file-copy-btn">复制</button>
+          <button id="file-copy-btn" onclick="copyFileOutput()">复制</button>
         </div>
         <pre id="file-output-content">转换结果将显示在这里...</pre>
+        <div id="file-edit-area">
+          <input type="text" id="file-edit-input" placeholder="输入修改要求，例如：把第一场景改成夜晚...">
+          <button id="file-edit-btn" onclick="editFileScript()">修改剧本</button>
+        </div>
       </div>
     </main>
     <div class="modal-overlay" id="file-modal">
