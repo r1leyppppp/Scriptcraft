@@ -33,11 +33,13 @@ header p {
   }
 
   #input-panel, #output-panel {
-    flex: 1;
-    padding: 20px;
-    background: #ffffff;
-    border-right: 1px solid #e0e0e0;
-  }
+  flex: 1;
+  padding: 20px;
+  background: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
   h2 {
   font-size: 20px;
@@ -287,4 +289,93 @@ textarea:focus {
 
 .page.active {
   display: block;
+}
+#edit-area {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8faff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+#edit-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  outline: none;
+  transition: all 0.2s;
+}
+
+#edit-input:focus {
+  border-color: #7194c6;
+}
+
+#edit-btn {
+  padding: 8px 20px;
+  background: #7194c6;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+#edit-btn:hover {
+  background: #4a72b0;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+#file-edit-area {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  background: #f8faff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+#file-edit-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  outline: none;
+  transition: all 0.2s;
+}
+
+#file-edit-input:focus {
+  border-color: #7194c6;
+}
+
+#file-edit-btn {
+  padding: 8px 20px;
+  background: #7194c6;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+#file-edit-btn:hover {
+  background: #4a72b0;
 }
