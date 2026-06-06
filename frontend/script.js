@@ -3,11 +3,40 @@ function goTo(page) {
   document.getElementById(page + '-page').classList.add('active');
 }
 
+let selectedStyle = '';
+
+function selectStyle(btn, style) {
+  document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedStyle = style;
+
+  const welcomePage = document.getElementById('welcome-page');
+  welcomePage.classList.remove('theme-movie', 'theme-stage', 'theme-tv');
+
+  const overlay = document.getElementById('spotlight-overlay');
+  const beam = document.getElementById('spotlight-beam');
+
+  if (style === '电影剧本') {
+    welcomePage.classList.add('theme-movie');
+    overlay.classList.remove('active');
+  } else if (style === '舞台剧本') {
+    document.body.classList.add('stage-mode');
+    welcomePage.classList.add('theme-stage');
+    overlay.classList.add('active');
+    const rect = btn.getBoundingClientRect();
+    beam.style.left = (rect.left + rect.width / 2 - 150) + 'px';
+  } else if (style === '电视剧本') {
+    welcomePage.classList.add('theme-tv');
+    overlay.classList.remove('active');
+  }
+}
+
 async function convertText() {
   const novelInput = document.getElementById('novel-input');
   const outputContent = document.getElementById('output-content');
   const convertBtn = document.getElementById('convert-btn');
   const text = novelInput.value.trim();
+  
   if (!text) { showModal('请先输入小说内容！'); return; }
   convertBtn.textContent = '转换中...';
   convertBtn.disabled = true;
@@ -16,7 +45,7 @@ async function convertText() {
     const response = await fetch('http://localhost:8000/convert', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text, style: selectedStyle })
     });
     const data = await response.json();
     outputContent.textContent = data.result;
@@ -60,7 +89,7 @@ async function convertFile() {
     const response = await fetch('http://localhost:8000/convert', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: fileText })
+      body: JSON.stringify({ text: fileText, style: selectedStyle })
     });
     const data = await response.json();
     fileOutputContent.textContent = data.result;
@@ -107,24 +136,6 @@ async function editScript() {
   }
 }
 
-function showModal(msg) {
-  document.getElementById('modal-msg').textContent = msg;
-  document.getElementById('modal').classList.add('show');
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('show');
-}
-
-function showFileModal(msg) {
-  document.getElementById('file-modal-msg').textContent = msg;
-  document.getElementById('file-modal').classList.add('show');
-}
-
-function closeFileModal() {
-  document.getElementById('file-modal').classList.remove('show');
-}
-
 async function editFileScript() {
   const editInput = document.getElementById('file-edit-input');
   const outputContent = document.getElementById('file-output-content');
@@ -150,4 +161,39 @@ async function editFileScript() {
     editBtn.textContent = '修改剧本';
     editBtn.disabled = false;
   }
+}
+
+function showModal(msg) {
+  document.getElementById('modal-msg').textContent = msg;
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function showFileModal(msg) {
+  document.getElementById('file-modal-msg').textContent = msg;
+  document.getElementById('file-modal').classList.add('show');
+}
+
+function closeFileModal() {
+  document.getElementById('file-modal').classList.remove('show');
+}
+
+function checkStyleAndNext() {
+  if (!selectedStyle) {
+    showWelcomeModal('请先选择剧本风格！');
+    return;
+  }
+  goTo('input-select');
+}
+
+function showWelcomeModal(msg) {
+  document.getElementById('welcome-modal-msg').textContent = msg;
+  document.getElementById('welcome-modal').classList.add('show');
+}
+
+function closeWelcomeModal() {
+  document.getElementById('welcome-modal').classList.remove('show');
 }
