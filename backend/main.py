@@ -52,3 +52,34 @@ YAML格式要求：
     )
     
     return {"result": response.choices[0].message.content}
+
+class EditInput(BaseModel):
+    script: str
+    request: str
+
+@app.post("/edit")
+async def edit(input: EditInput):
+    client = OpenAI(
+        api_key=os.environ.get("ALIBABA_API_KEY"),
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
+    
+    response = client.chat.completions.create(
+        model="qwen-plus",
+        messages=[
+            {
+                "role": "user",
+                "content": f"""你是一位专业的剧本改编师。以下是一份已生成的YAML格式剧本，用户希望对其进行修改。
+
+当前剧本：
+{input.script}
+
+用户的修改要求：
+{input.request}
+
+请根据用户要求修改剧本，保持YAML格式输出，直接输出修改后的完整YAML内容，不要有任何解释文字。"""
+            }
+        ]
+    )
+    
+    return {"result": response.choices[0].message.content}
