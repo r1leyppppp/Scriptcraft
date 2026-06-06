@@ -45,6 +45,10 @@ header p {
     padding: 20px;
     background: #ffffff;
     border-right: 1px solid #e0e0e0;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -59,20 +63,80 @@ header p {
 }
 
   textarea {
+    flex: 1;
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 14px;
+    font-family: 'Microsoft YaHei', sans-serif;
+    resize: none;
+    outline: none;
+    line-height: 1.7;
+  }
+
+textarea:focus {
+  border-color: #6366f1;
+}
+
+#convert-btn {
+  padding: 8px 20px;
+  background: #ffffff;
+  color: #1f2937;
+  border: 1.5px solid #1f2937;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  transition: all 0.2s;
+}
+
+#convert-btn:hover {
+  background: #1f2937;
+  color: #ffffff;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+#output-content {
+  flex: 1;
   width: 100%;
   height: calc(100% - 40px);
   border: 1px solid #e0e0e0;
   border-radius: 6px;
   padding: 12px;
-  font-size: 14px;
-  font-family: 'Microsoft YaHei', sans-serif;
-  resize: none;
-  outline: none;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  background: #f8f9fa;
+  color: #333;
+  overflow: auto;
+  white-space: pre-wrap;
   line-height: 1.7;
 }
 
-textarea:focus {
-  border-color: #6366f1;
+#copy-btn{
+  padding: 8px 20px;
+  background: #ffffff;
+  color: #1f2937;
+  border: 1.5px solid #1f2937;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Microsoft YaHei', sans-serif;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  transition: all 0.2s;
+}
+
+#copy-btn:hover {
+  background: #1f2937;
+  color: #ffffff;
 }
 
 #convert-btn {
@@ -182,8 +246,10 @@ textarea:focus {
   <main>
     <div id="input-panel">
       <div class="panel-header">
-      <h2>小说输入</h2>
-    <button id="convert-btn">开始转换</button>
+        <h2>小说输入</h2>
+        <button id="convert-btn">开始转换</button>
+      </div>
+      <textarea id="novel-input" placeholder="在这里粘贴小说原文..."></textarea>
     </div>
     
     <textarea id="novel-input" placeholder="在这里粘贴小说原文..."></textarea>
