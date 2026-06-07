@@ -2,6 +2,15 @@ function goTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(page + '-page').classList.add('active');
   if (page === 'library') renderLibrary();
+  if (page === 'relationship') {
+  const lib = getLibrary();
+  const container = document.getElementById('script-selector');
+  if (container) {
+    if (!lib.scripts.length) {
+      container.innerHTML = '<p style="color:#9ca3af;padding:0 20px;">剧本库为空，请先保存剧本</p>';
+    }
+  }
+}
 }
 
 let selectedStyle = '';
@@ -592,4 +601,134 @@ async function generateReview(script, containerId) {
   } catch (e) {
     container.innerHTML = '<p style="color:#9ca3af;padding:20px;">评价生成失败</p>';
   }
+}
+
+async function generateRelationship(id) {
+  const lib = getLibrary();
+  const s = lib.scripts.find(s => s.id === id);
+  if (!s) return;
+  
+  const graph = document.getElementById('relationship-graph');
+  graph.innerHTML = '<p style="text-align:center;padding:40px;color:#9ca3af;">正在分析人物关系...</p>';
+  
+  try {
+    const response = await fetch('http://localhost:8000/relationship', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ script: s.content })
+    });
+    const data = await response.json();
+    const text = data.result.replace(/```json|```/g, '').trim();
+    const rel = JSON.parse(text);
+    renderGraph(rel);
+  } catch (e) {
+    graph.innerHTML = '<p style="text-align:center;padding:40px;color:#ef4444;">生成失败，请确认后端已启动</p>';
+  }
+}
+
+function renderGraph(rel) {
+  const graph = document.getElementById('relationship-graph');
+  const width = graph.offsetWidth;
+  const height = 500;
+  const characters = rel.characters;
+  const relations = rel.relations;
+  
+  const n = characters.length;
+  const cx = width / 2;
+  const cy = height / 2;
+  const r = Math.min(width, height) * 0.25;
+  
+  const positions = characters.map((c, i) => ({
+    name: c.name,
+    x: cx + r * Math.cos((2 * Math.PI * i / n) - Math.PI / 2),
+    y: cy + r * Math.sin((2 * Math.PI * i / n) - Math.PI / 2)
+  }));
+  
+  let svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
+  
+  relations.forEach(rel => {
+    const from = positions.find(p => p.name === rel.from);
+    const to = positions.find(p => p.name === rel.to);
+    if (!from || !to) return;
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const offset = 20;
+    const x1 = from.x + dx/dist * offset;
+    const y1 = from.y + dy/dist * offset;
+    const x2 = to.x - dx/dist * offset;
+    const y2 = to.y - dy/dist * offset;
+    const mx = (from.x + to.x) / 2;
+    const my = (from.y + to.y) / 2;
+    svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#8B4513" stroke-width="2"/>`;
+    const textLen = rel.type.length * 12;
+    svg += `<rect x="${mx - textLen/2 - 4}" y="${my - 10}" width="${textLen + 8}" height="20" rx="4" fill="#f5ede0"/>`;
+    svg += `<text x="${mx}" y="${my + 5}" text-anchor="middle" font-size="12" fill="#6b3a1f" font-family="Microsoft YaHei">${rel.type}</text>`;
+  });
+  
+  positions.forEach(p => {
+    svg += `<text x="${p.x}" y="${p.y+5}" text-anchor="middle" font-size="15" fill="#6b3a1f" font-family="Microsoft YaHei" font-weight="bold">${p.name}</text>`;
+  });
+  
+  svg += '</svg>';
+  graph.innerHTML = svg;
+}
+
+function showRelImportModal() {
+  document.getElementById('rel-import-modal').classList.add('show');
+}
+
+function closeRelImportModal() {
+  document.getElementById('rel-import-modal').classList.remove('show');
+}
+
+function importFromDevice() {
+  closeRelImportModal();
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.yaml,.yml';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const content = ev.target.result;
+      const graph = document.getElementById('relationship-graph');
+      graph.innerHTML = '<p style="text-align:center;padding:40px;color:#9ca3af;">正在分析人物关系...</p>';
+      fetch('http://localhost:8000/relationship', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ script: content })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const text = data.result.replace(/```json|```/g, '').trim();
+        const rel = JSON.parse(text);
+        renderGraph(rel);
+      })
+      .catch(() => {
+        graph.innerHTML = '<p style="text-align:center;padding:40px;color:#ef4444;">生成失败</p>';
+      });
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function showRelScriptList() {
+  closeRelImportModal();
+  const lib = getLibrary();
+  const container = document.getElementById('rel-script-list');
+  if (!lib.scripts.length) {
+    container.innerHTML = '<p style="color:#9ca3af;">剧本库为空</p>';
+  } else {
+    container.innerHTML = lib.scripts.map(s => `
+      <button class="script-select-btn" onclick="generateRelationship(${s.id}); closeRelScriptList();">${s.name}</button>
+    `).join('');
+  }
+  document.getElementById('rel-script-list-modal').classList.add('show');
+}
+
+function closeRelScriptList() {
+  document.getElementById('rel-script-list-modal').classList.remove('show');
 }

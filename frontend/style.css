@@ -869,3 +869,60 @@ pre { white-space: pre-wrap; word-break: break-all; }
   line-height: 1.6;
   margin-top: 8px;
 }
+
+#relationship-page {
+  background: #d0c1ac;
+  min-height: 100vh;
+}
+
+#relationship-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+#relationship-graph {
+  width: 100%;
+  min-height: 500px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.rel-import-btn {
+  position: absolute;
+  right: 100px;
+  top: 12px;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1.5px solid #ffffff;
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Microsoft YaHei', sans-serif;
+  transition: all 0.2s;
+}
+
+.rel-import-btn:hover { background: rgba(255,255,255,0.2); }
+
+.script-select-btn {
+  padding: 12px 24px;
+  background: #f5ede0;
+  border: 1.5px solid #8B4513;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Microsoft YaHei', sans-serif;
+  color: #6b3a1f;
+  transition: all 0.2s;
+  text-align: left;
+  width: 95%;
+}
+
+.script-select-btn:hover {
+  background: #8B4513;
+  color: #f5ede0;
+  transform: translateX(4px);
+}
