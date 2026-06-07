@@ -427,7 +427,9 @@ function viewScript(id) {
   const lib = getLibrary();
   const s = lib.scripts.find(s => s.id === id);
   if (!s) return;
-  alert(s.content);
+  document.getElementById('view-script-title').textContent = s.name;
+  document.getElementById('view-script-content').textContent = s.content;
+  goTo('view-script');
 }
 
 function moveScript(id) {

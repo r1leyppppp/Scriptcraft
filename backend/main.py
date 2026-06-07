@@ -114,9 +114,15 @@ class ExportInput(BaseModel):
 async def export_file(input: ExportInput):
     try:
         if input.format == 'docx':
+            from docx.shared import Pt
+            from docx.oxml.ns import qn
             doc = DocxDocument()
             for line in input.content.split('\n'):
-                doc.add_paragraph(line)
+                para = doc.add_paragraph(line)
+                run = para.runs[0] if para.runs else para.add_run()
+                run.font.name = '微软雅黑'
+                run._element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
+                run.font.size = Pt(11)
             tmp = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
             doc.save(tmp.name)
             return StreamingResponse(
@@ -125,16 +131,54 @@ async def export_file(input: ExportInput):
                 headers={'Content-Disposition': 'attachment; filename=script.docx'}
             )
         elif input.format == 'pdf':
+            from reportlab.pdfbase import pdfmetrics
+            from reportlab.pdfbase.ttfonts import TTFont
+            import platform
+            try:
+                if platform.system() == 'Windows':
+                    pdfmetrics.registerFont(TTFont('Chinese', 'C:/Windows/Fonts/msyh.ttc'))
+                else:
+                    pdfmetrics.registerFont(TTFont('Chinese', '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc'))
+                font_name = 'Chinese'
+            except:
+                font_name = 'Helvetica'
             tmp = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
             c = canvas.Canvas(tmp.name, pagesize=A4)
             width, height = A4
-            y = height - 40
+            margin = 40
+            max_width = width - margin * 2
+            y = height - margin
+            c.setFont(font_name, 12)
+
+            def new_page():
+                nonlocal y
+                c.showPage()
+                c.setFont(font_name, 12)
+                y = height - margin
+
             for line in input.content.split('\n'):
-                if y < 40:
-                    c.showPage()
-                    y = height - 40
-                c.drawString(40, y, line)
-                y -= 15
+                if not line.strip():
+                    y -= 18
+                    if y < margin:
+                        new_page()
+                    continue
+                current = ''
+                for char in line:
+                    test = current + char
+                    if c.stringWidth(test, font_name, 12) > max_width:
+                        c.drawString(margin, y, current)
+                        y -= 18
+                        if y < margin:
+                            new_page()
+                        current = char
+                    else:
+                        current = test
+                if current:
+                    c.drawString(margin, y, current)
+                    y -= 18
+                    if y < margin:
+                        new_page()
+
             c.save()
             return StreamingResponse(
                 open(tmp.name, 'rb'),
