@@ -267,7 +267,11 @@ textarea:focus {
 }
 
 .page { display: none; }
-.page.active { display: block; }
+.page.active { 
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
 
 #edit-area, #file-edit-area {
   display: flex;
@@ -1218,4 +1222,43 @@ pre { white-space: pre-wrap; word-break: break-all; }
   padding: 24px;
   border-radius: 12px;
   border: 1px solid #e0e0e0;
+}
+
+#move-script-modal .script-select-btn {
+  background: #f8faff;
+  color: #7194c6;
+  border: 1.5px solid #7194c6;
+  transform: none;
+}
+
+#move-script-modal .script-select-btn:hover {
+  background: #7194c6;
+  color: #fff;
+  transform: none;
+}
+#move-folder-list .script-select-btn {
+  background: #f8faff;
+  color: #7194c6;
+  border: 1.5px solid #7194c6;
+  transform: none;
+  width: 100%;
+}
+
+#move-folder-list .script-select-btn:hover {
+  background: #7194c6;
+  color: #fff;
+  transform: none;
+}
+#card-name-modal {
+  z-index: 99999 !important;
+}
+
+#view-card-page {
+  background: #f8faff !important;
+  min-height: 100vh;
+}
+
+#view-card-page header {
+  background: #7194c6;
+  border-bottom: 1px solid #4a72b0;
 }
