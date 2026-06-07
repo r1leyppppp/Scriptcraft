@@ -28,7 +28,7 @@ class NovelInput(BaseModel):
 @app.post("/convert")
 async def convert(input: NovelInput):
     client = OpenAI(
-        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
+        api_key=os.environ.get("ALIBABA_API_KEY"),
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
     response = client.chat.completions.create(
@@ -67,7 +67,7 @@ class EditInput(BaseModel):
 @app.post("/edit")
 async def edit(input: EditInput):
     client = OpenAI(
-        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
+        api_key=os.environ.get("ALIBABA_API_KEY"),
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
     response = client.chat.completions.create(
@@ -152,7 +152,7 @@ class ReviewInput(BaseModel):
 @app.post("/review")
 async def review_script(input: ReviewInput):
     client = OpenAI(
-        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
+        api_key=os.environ.get("ALIBABA_API_KEY"),
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
     response = client.chat.completions.create(
@@ -173,6 +173,41 @@ async def review_script(input: ReviewInput):
   "weaknesses": ["不足1", "不足2"],
   "suggestions": ["建议1", "建议2", "建议3"]
 }}"""
+            }
+        ]
+    )
+    return {"result": response.choices[0].message.content}
+
+class RelationshipInput(BaseModel):
+    script: str
+
+@app.post("/relationship")
+async def get_relationship(input: RelationshipInput):
+    client = OpenAI( 
+        api_key=os.environ.get("ALIBABA_API_KEY"),
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
+    response = client.chat.completions.create(
+        model="qwen-plus",
+        messages=[
+            {
+                "role": "user",
+                "content": f"""分析以下剧本中的人物关系，输出JSON格式。
+
+剧本：
+{input.script}
+
+输出格式：
+{{
+  "characters": [
+    {{"name": "人物名"}}
+  ],
+  "relations": [
+    {{"from": "人物A", "to": "人物B", "type": "关系类型"}}
+  ]
+}}
+
+只输出JSON，不要其他文字。"""
             }
         ]
     )

@@ -289,7 +289,7 @@
           <div id="file-review-content"><p style="color:#9ca3af;padding:20px;">生成剧本后自动生成评价...</p></div>
         </div>
       </div>
-      
+
     </main>
     <div class="modal-overlay" id="file-save-modal">
       <div class="modal-box">
@@ -346,6 +346,36 @@
     </div>
   </div>
 
+  <div id="relationship-page" class="page">
+    <header style="background:#2e2013; border-bottom:1px solid #3d2800;">
+      <h1>ScriptCraft</h1>
+      <p style="color:#c8a882;">人物关系图</p>
+      <button class="back-btn" onclick="goTo('welcome')">← 返回</button>
+      <button class="rel-import-btn" onclick="showRelImportModal()">导入剧本</button>
+    </header>
+    
+    <div id="relationship-container">
+      <div id="script-selector"></div>
+      <div id="relationship-graph"></div>
+    </div>
+    <div class="modal-overlay" id="rel-import-modal">
+      <div class="modal-box" style="background:#f5ede0; border:2px solid #8B4513; border-radius:16px;">
+        <p style="color:#6b3a1f; font-weight:700;">选择导入来源</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <button class="modal-confirm" style="background:#8B4513;" onclick="importFromDevice()">从此设备导入</button>
+          <button class="modal-confirm" style="background:#8B4513;" onclick="showRelScriptList()">从剧本库导入</button>
+          <button style="background:#c8a882; color:#6b3a1f;" class="modal-confirm" onclick="closeRelImportModal()">取消</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="rel-script-list-modal">
+      <div class="modal-box" style="background:#f5ede0; border:2px solid #8B4513; border-radius:16px;">
+        <p style="color:#6b3a1f; font-weight:700;">选择剧本</p>
+        <div id="rel-script-list" style="display:flex; flex-direction:column; gap:8px; margin-top:8px; max-height:300px; overflow-y:auto;"></div>
+        <button style="background:#c8a882; color:#6b3a1f; margin-top:12px;" class="modal-confirm" onclick="closeRelScriptList()">取消</button>
+      </div>
+    </div>
+</div>
   <div id="bottom-drawer-hint" onclick="showDrawer()"></div>
   <div id="bottom-drawer">
     <div class="drawer-handle" onclick="hideDrawer()"></div>
@@ -353,6 +383,9 @@
     <div class="drawer-content">
       <div class="drawer-item" onclick="goTo('library'); hideDrawer()">
         <span>剧本库</span>
+      </div>
+      <div class="drawer-item" onclick="goTo('relationship'); hideDrawer()">
+        <span>人物关系</span>
       </div>
     </div>
   </div>
