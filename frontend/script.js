@@ -830,6 +830,7 @@ async function generateStoryboard(id) {
 }
 
 function renderStoryboard(yamlText) {
+  currentStoryboardYaml = yamlText; 
   const container = document.getElementById('storyboard-shots');
   // 解析YAML shots
   const shots = [];
@@ -867,4 +868,93 @@ function renderStoryboard(yamlText) {
       ${s.dialogue ? `<div class="shot-dialogue">「${s.dialogue}」</div>` : ''}
     </div>
   `).join('');
+}
+
+// ===== 分镜保存 =====
+let currentStoryboardYaml = '';
+
+function showStoryboardSaveModal() {
+  if (!currentStoryboardYaml) {
+    showModal('请先生成分镜！');
+    return;
+  }
+  document.getElementById('storyboard-save-modal').classList.add('show');
+}
+
+function closeStoryboardSaveModal() {
+  document.getElementById('storyboard-save-modal').classList.remove('show');
+}
+
+function showStoryboardHistory() {
+  const history = JSON.parse(localStorage.getItem('storyboardHistory') || '[]');
+  const container = document.getElementById('storyboard-history-list');
+  if (!history.length) {
+    container.innerHTML = '<p style="color:#5ba3b8;text-align:center;padding:20px;">暂无保存记录</p>';
+  } else {
+    container.innerHTML = history.map((item, i) => `
+      <div style="background:#0f1f2e;border:1px solid #1f3040;border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="color:#d1e8f0;font-size:13px;font-weight:600;">${item.name}</div>
+          <div style="color:#5ba3b8;font-size:11px;margin-top:4px;">${item.date}</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="downloadStoryboardHistory(${i})" style="background:#1f3040;color:#a8cdd8;border:1px solid #a8cdd8;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;">下载</button>
+          <button onclick="deleteStoryboardHistory(${i})" style="background:#1f3040;color:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;">删除</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('storyboard-history-modal').classList.add('show');
+}
+
+function closeStoryboardHistory() {
+  document.getElementById('storyboard-history-modal').classList.remove('show');
+}
+
+function saveStoryboard(format) {
+  closeStoryboardSaveModal();
+  const name = '分镜_' + new Date().toLocaleDateString();
+
+  // 保存到历史记录
+  const history = JSON.parse(localStorage.getItem('storyboardHistory') || '[]');
+  history.unshift({ name, date: new Date().toLocaleString(), yaml: currentStoryboardYaml });
+  localStorage.setItem('storyboardHistory', JSON.stringify(history));
+
+  if (format === 'yaml') {
+    const blob = new Blob([currentStoryboardYaml], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name + '.yaml';
+    a.click();
+  } else {
+    fetch('http://localhost:8000/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: currentStoryboardYaml, format: format, filename: name })
+    })
+    .then(res => res.blob())
+    .then(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name + '.' + format;
+      a.click();
+    });
+  }
+}
+
+function downloadStoryboardHistory(i) {
+  const history = JSON.parse(localStorage.getItem('storyboardHistory') || '[]');
+  const item = history[i];
+  const blob = new Blob([item.yaml], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = item.name + '.yaml';
+  a.click();
+}
+
+function deleteStoryboardHistory(i) {
+  const history = JSON.parse(localStorage.getItem('storyboardHistory') || '[]');
+  history.splice(i, 1);
+  localStorage.setItem('storyboardHistory', JSON.stringify(history));
+  showStoryboardHistory();
 }

@@ -1113,3 +1113,41 @@ pre { white-space: pre-wrap; word-break: break-all; }
   background: #a8cdd8;
   color: #0a0f1a;
 }
+
+.storyboard-save-btn {
+  position: absolute;
+  right: 310px;
+  top: 12px;
+  padding: 6px 14px;
+  background: #a8cdd8;
+  border: none;
+  border-radius: 20px;
+  color: #0a0f1a;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.storyboard-save-btn:hover { opacity: 0.85; }
+
+.storyboard-history-btn {
+  position: absolute;
+  right: 200px;
+  top: 12px;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1.5px solid #a8cdd8;
+  border-radius: 20px;
+  color: #a8cdd8;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Microsoft YaHei', sans-serif;
+  transition: all 0.2s;
+}
+
+.storyboard-history-btn:hover {
+  background: #a8cdd8;
+  color: #0a0f1a;
+}
