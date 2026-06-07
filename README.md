@@ -84,3 +84,8 @@ YAML 剧本
 ├── characters → 人物关系图 → 导出 PNG
 ├── scene + actions + dialogue → 分镜脚本 → 导出 YAML/DOCX/PDF
 └── 全部字段 → 剧本评审与评分
+
+## 演示视频
+网盘分享的文件：Scriptcraft.mp4
+链接: https://pan.baidu.com/s/1iEfN3OcjxomXhIpTkubkNw?pwd=wpy9 提取码: wpy9 
+bili：https://www.bilibili.com/video/BV1vbEh6bEa7/?spm_id_from=333.1387.homepage.video_card.click
