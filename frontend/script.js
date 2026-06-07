@@ -737,26 +737,52 @@ function storyboardFromDevice() {
   closeStoryboardImportModal();
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.txt,.yaml,.yml';
+  input.accept = '.txt,.yaml,.yml,.docx,.pdf';
   input.onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const container = document.getElementById('storyboard-shots');
-      container.innerHTML = '<p style="text-align:center;padding:40px;color:#9ca3af;">正在生成分镜脚本...</p>';
-      fetch('http://localhost:8000/storyboard', {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const container = document.getElementById('storyboard-shots');
+    container.innerHTML = '<p style="text-align:center;padding:40px;color:#5ba3b8;">正在生成分镜脚本...</p>';
+
+    if (ext === 'txt' || ext === 'yaml' || ext === 'yml') {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        fetch('http://localhost:8000/storyboard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ script: ev.target.result })
+        })
+        .then(res => res.json())
+        .then(data => renderStoryboard(data.result))
+        .catch(() => {
+          container.innerHTML = '<p style="text-align:center;padding:40px;color:#ef4444;">生成失败，请确认后端已启动</p>';
+        });
+      };
+      reader.readAsText(file);
+    } else {
+      // docx / pdf 走后端解析
+      const formData = new FormData();
+      formData.append('file', file);
+      fetch('http://localhost:8000/parse-file', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ script: ev.target.result })
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) throw new Error(data.error);
+        return fetch('http://localhost:8000/storyboard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ script: data.text })
+        });
       })
       .then(res => res.json())
       .then(data => renderStoryboard(data.result))
       .catch(() => {
         container.innerHTML = '<p style="text-align:center;padding:40px;color:#ef4444;">生成失败，请确认后端已启动</p>';
       });
-    };
-    reader.readAsText(file);
+    }
   };
   input.click();
 }
