@@ -8,6 +8,10 @@ import os
 import io
 import tempfile
 import platform
+from dotenv import load_dotenv
+
+# 加载 .env 文件中的环境变量
+load_dotenv()
 
 # ===== 第三方库 =====
 from fastapi import FastAPI, UploadFile, File
@@ -32,7 +36,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 # =============================================================================
