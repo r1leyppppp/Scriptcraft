@@ -144,19 +144,65 @@
         <textarea id="novel-input" placeholder="在这里粘贴小说原文..."></textarea>
       </div>
       <div id="output-panel">
-        <div class="panel-header">
-          <h2>剧本输出</h2>
-          <div class="panel-actions">
-            <button id="copy-btn" onclick="copyOutput()">复制</button>
-            <button id="save-btn" onclick="saveScript()">保存</button>
+        <div class="tab-bar">
+          <div class="tab active" onclick="switchTab(this, 'script')">剧本输出</div>
+          <div class="tab" onclick="switchTab(this, 'character')">人物卡</div>
+          <div class="tab" onclick="switchTab(this, 'review')">评价建议</div>
+        </div>
+        <div class="tab-content" id="tab-script">
+          <pre id="output-content">转换结果将显示在这里...</pre>
+          <div id="edit-area">
+            <input type="text" id="edit-input" placeholder="输入修改要求，例如：把第一场景改成夜晚...">
+            <button id="edit-btn" onclick="editScript()">修改剧本</button>
           </div>
         </div>
-        <pre id="output-content">转换结果将显示在这里...</pre>
-        <div id="edit-area">
-          <input type="text" id="edit-input" placeholder="输入修改要求，例如：把第一场景改成夜晚...">
-          <button id="edit-btn" onclick="editScript()">修改剧本</button>
+        <div class="tab-content" id="tab-character" style="display:none;">
+          <div id="character-cards"><p style="color:#9ca3af;padding:20px;">生成剧本后自动生成人物卡...</p></div>
+        </div>
+        <div class="tab-content" id="tab-review" style="display:none;">
+          <div id="review-content"><p style="color:#9ca3af;padding:20px;">生成剧本后自动生成评价...</p></div>
         </div>
       </div>
+    </main>
+    <div class="modal-overlay" id="name-modal">
+      <div class="modal-box">
+        <p>给剧本起个名字</p>
+        <input type="text" id="script-name-input" placeholder="未命名剧本" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;margin-bottom:16px;outline:none;font-family:'Microsoft YaHei',sans-serif;">
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button class="modal-confirm" onclick="confirmSaveName()">确认</button>
+          <button style="background:#e0e0e0;color:#333;" class="modal-confirm" onclick="closeNameModal()">取消</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="save-modal">
+      <div class="modal-box">
+        <p>选择保存方式</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <button class="modal-confirm" onclick="showExportModal()">💾 保存到设备</button>
+          <button class="modal-confirm" onclick="saveToLibrary(); closeSaveModal()">📚 保存到剧本库</button>
+          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeSaveModal()">取消</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="export-modal">
+      <div class="modal-box">
+        <p>选择导出格式</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <button class="modal-confirm" onclick="exportAs('txt')">TXT</button>
+          <button class="modal-confirm" onclick="exportAs('docx')">Word (.docx)</button>
+          <button class="modal-confirm" onclick="exportAs('pdf')">PDF</button>
+          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeExportModal()">取消</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="modal">
+      <div class="modal-box">
+        <p id="modal-msg">提示</p>
+        <button class="modal-confirm" onclick="closeModal()">确认</button>
+      </div>
+    </div>
+  </div>
+
     </main>
     <div class="modal-overlay" id="name-modal">
       <div class="modal-box">
@@ -218,19 +264,32 @@
         <button id="clear-file-btn" onclick="clearFile()" style="display:none; margin-bottom:12px; padding:6px 16px; background:transparent; border:1.5px solid #e0e0e0; border-radius:20px; font-size:13px; cursor:pointer; color:#6b7280; font-family:'Microsoft YaHei',sans-serif;">✕ 重新选择</button>
       </div>
       <div id="file-output-panel">
-        <div class="panel-header">
-          <h2>剧本输出</h2>
-          <div class="panel-actions">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #e0e0e0; margin-bottom:16px;">
+          <div style="display:flex;">
+            <div class="tab active" onclick="switchTab(this, 'file-script')">剧本输出</div>
+            <div class="tab" onclick="switchTab(this, 'file-character')">人物卡</div>
+            <div class="tab" onclick="switchTab(this, 'file-review')">评价建议</div>
+          </div>
+          <div class="panel-actions" style="padding-right:8px;">
             <button id="file-copy-btn" onclick="copyFileOutput()">复制</button>
             <button id="file-save-btn" onclick="saveFileScript()">保存</button>
           </div>
         </div>
-        <pre id="file-output-content">转换结果将显示在这里...</pre>
-        <div id="file-edit-area">
-          <input type="text" id="file-edit-input" placeholder="输入修改要求，例如：把第一场景改成夜晚...">
-          <button id="file-edit-btn" onclick="editFileScript()">修改剧本</button>
+        <div class="tab-content" id="tab-file-script">
+          <pre id="file-output-content">转换结果将显示在这里...</pre>
+          <div id="file-edit-area">
+            <input type="text" id="file-edit-input" placeholder="输入修改要求，例如：把第一场景改成夜晚...">
+            <button id="file-edit-btn" onclick="editFileScript()">修改剧本</button>
+          </div>
+        </div>
+        <div class="tab-content" id="tab-file-character" style="display:none;">
+          <div id="file-character-cards"><p style="color:#9ca3af;padding:20px;">生成剧本后自动生成人物卡...</p></div>
+        </div>
+        <div class="tab-content" id="tab-file-review" style="display:none;">
+          <div id="file-review-content"><p style="color:#9ca3af;padding:20px;">生成剧本后自动生成评价...</p></div>
         </div>
       </div>
+      
     </main>
     <div class="modal-overlay" id="file-save-modal">
       <div class="modal-box">
