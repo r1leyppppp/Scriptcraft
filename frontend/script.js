@@ -50,6 +50,7 @@ async function convertText() {
     });
     const data = await response.json();
     outputContent.textContent = data.result;
+    generateCharacterCards(data.result, 'character-cards');
   } catch (error) {
     outputContent.textContent = '请求失败，请确认后端服务已启动。';
   } finally {
@@ -109,6 +110,7 @@ async function convertFile() {
     });
     const data = await response.json();
     fileOutputContent.textContent = data.result;
+    generateCharacterCards(data.result, 'file-character-cards');
   } catch (error) {
     fileOutputContent.textContent = '请求失败，请确认后端服务已启动。';
   } finally {
@@ -505,4 +507,46 @@ function exportAs(format) {
       closeFileExportModal();
     });
   }
+}
+
+function switchTab(el, tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  el.classList.add('active');
+  document.getElementById('tab-' + tab).style.display = 'block';
+}
+
+function generateCharacterCards(yamlText, containerId) {
+  const container = document.getElementById(containerId || 'character-cards');
+  const lines = yamlText.split('\n');
+  const characters = [];
+  let current = null;
+
+  lines.forEach(line => {
+    if (line.match(/^\s*-\s*name:/)) {
+      if (current) characters.push(current);
+      current = { name: line.replace(/.*name:\s*["']?/, '').replace(/["']$/, '').trim() };
+    } else if (current && line.match(/appearance:/)) {
+      current.appearance = line.replace(/.*appearance:\s*["']?/, '').replace(/["']$/, '').trim();
+    } else if (current && line.match(/personality:/)) {
+      current.personality = line.replace(/.*personality:\s*["']?/, '').replace(/["']$/, '').trim();
+    }
+  });
+  if (current) characters.push(current);
+
+  if (!characters.length) {
+    container.innerHTML = '<p style="color:#9ca3af;padding:20px;">未检测到人物信息</p>';
+    return;
+  }
+
+  container.innerHTML = characters.map(c => `
+    <div class="character-card">
+      <div class="character-avatar">${c.name.charAt(0)}</div>
+      <div class="character-info">
+        <div class="character-name">${c.name}</div>
+        ${c.appearance ? `<span class="character-tag">外貌</span><span style="font-size:13px;color:#6b7280;">${c.appearance}</span>` : ''}
+        ${c.personality ? `<div class="character-desc"><span class="character-tag">性格</span>${c.personality}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
 }
