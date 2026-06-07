@@ -148,6 +148,10 @@
           <div class="tab active" onclick="switchTab(this, 'script')">剧本输出</div>
           <div class="tab" onclick="switchTab(this, 'character')">人物卡</div>
           <div class="tab" onclick="switchTab(this, 'review')">评价建议</div>
+          <div class="panel-actions" style="margin-left:auto;padding:4px 8px;">
+            <button id="copy-btn" onclick="copyOutput()">复制</button>
+            <button id="save-btn" onclick="saveScript()">保存</button>
+          </div>
         </div>
         <div class="tab-content" id="tab-script">
           <pre id="output-content">转换结果将显示在这里...</pre>
@@ -203,45 +207,7 @@
     </div>
   </div>
 
-    </main>
-    <div class="modal-overlay" id="name-modal">
-      <div class="modal-box">
-        <p>给剧本起个名字</p>
-        <input type="text" id="script-name-input" placeholder="未命名剧本" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;margin-bottom:16px;outline:none;font-family:'Microsoft YaHei',sans-serif;">
-        <div style="display:flex;gap:8px;justify-content:center;">
-          <button class="modal-confirm" onclick="confirmSaveName()">确认</button>
-          <button style="background:#e0e0e0;color:#333;" class="modal-confirm" onclick="closeNameModal()">取消</button>
-        </div>
-      </div>
-    </div>
-    <div class="modal-overlay" id="save-modal">
-      <div class="modal-box">
-        <p>选择保存方式</p>
-        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
-          <button class="modal-confirm" onclick="showExportModal()">💾 保存到设备</button>
-          <button class="modal-confirm" onclick="saveToLibrary(); closeSaveModal()">📚 保存到剧本库</button>
-          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeSaveModal()">取消</button>
-        </div>
-      </div>
-    </div>
-    <div class="modal-overlay" id="export-modal">
-      <div class="modal-box">
-        <p>选择导出格式</p>
-        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
-          <button class="modal-confirm" onclick="exportAs('txt')">TXT</button>
-          <button class="modal-confirm" onclick="exportAs('docx')">Word (.docx)</button>
-          <button class="modal-confirm" onclick="exportAs('pdf')">PDF</button>
-          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeExportModal()">取消</button>
-        </div>
-      </div>
-    </div>
-    <div class="modal-overlay" id="modal">
-      <div class="modal-box">
-        <p id="modal-msg">提示</p>
-        <button class="modal-confirm" onclick="closeModal()">确认</button>
-      </div>
-    </div>
-  </div>
+    
 
   <div id="file-page" class="page">
     <button class="back-btn" onclick="goTo('welcome')">← 返回</button>
@@ -317,6 +283,17 @@
         <p id="file-modal-msg">提示</p>
         <button class="modal-confirm" onclick="closeFileModal()">确认</button>
       </div>
+    </div>
+  </div>
+
+  <div id="view-script-page" class="page" style="background:#f8faff;min-height:100vh;">
+    <header style="background:#7194c6;border-bottom:1px solid #4a72b0;">
+      <h1>ScriptCraft</h1>
+      <p id="view-script-title">剧本详情</p>
+      <button class="back-btn" onclick="goTo('library')">← 返回</button>
+    </header>
+    <div style="max-width:860px;margin:0 auto;padding:24px;">
+      <pre id="view-script-content" style="white-space:pre-wrap;word-break:break-all;font-size:14px;line-height:1.8;color:#1f2937;background:#fff;padding:24px;border-radius:12px;border:1px solid #e0e0e0;overflow-x:hidden;width:100%;box-sizing:border-box;"></pre>
     </div>
   </div>
 

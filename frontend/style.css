@@ -1188,3 +1188,34 @@ pre { white-space: pre-wrap; word-break: break-all; }
 .rel-history-btn:hover {
   background: rgba(255,255,255,0.2);
 }
+
+#view-script-page {
+  background: #f8faff !important;
+  min-height: 100vh;
+}
+
+#view-script-page header {
+  background: #7194c6;
+  border-bottom: 1px solid #4a72b0;
+}
+
+#view-script-page > div {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+#view-script-content {
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #1f2937;
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
