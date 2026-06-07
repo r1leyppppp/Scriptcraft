@@ -29,19 +29,7 @@ function selectStyle(btn, style) {
   } else if (style === '电视剧本') {
     welcomePage.classList.add('theme-tv');
     overlay.classList.remove('active');
-  }
-  const toggle = document.getElementById('sidebar-toggle');
-  if (style === '电影剧本') {
-  toggle.style.color = '#2a1800';
-  toggle.style.borderColor = 'rgba(42,24,0,0.4)';
-  } else if (style === '舞台剧本') {
-  toggle.style.color = '#ffddcc';
-  toggle.style.borderColor = 'rgba(255,221,204,0.4)';
-  } else if (style === '电视剧本') {
-  toggle.style.color = '#a0c4ff';
-  toggle.style.borderColor = 'rgba(160,196,255,0.4)';
-}
-  
+  }  
 }
 
 async function convertText() {
