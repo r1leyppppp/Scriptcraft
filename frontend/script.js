@@ -30,18 +30,6 @@ function selectStyle(btn, style) {
     welcomePage.classList.add('theme-tv');
     overlay.classList.remove('active');
   }
-  const toggle = document.getElementById('sidebar-toggle');
-  if (style === '电影剧本') {
-  toggle.style.color = '#2a1800';
-  toggle.style.borderColor = 'rgba(42,24,0,0.4)';
-  } else if (style === '舞台剧本') {
-  toggle.style.color = '#ffddcc';
-  toggle.style.borderColor = 'rgba(255,221,204,0.4)';
-  } else if (style === '电视剧本') {
-  toggle.style.color = '#a0c4ff';
-  toggle.style.borderColor = 'rgba(160,196,255,0.4)';
-}
-  
 }
 
 async function convertText() {
@@ -272,9 +260,20 @@ function saveFileScript() {
   if (content === '转换结果将显示在这里...') { showFileModal('请先生成剧本！'); return; }
   _pendingContent = content;
   _pendingStyle = selectedStyle;
-  _pendingSource = 'file';
-  document.getElementById('script-name-input').value = '';
-  document.getElementById('name-modal').classList.add('show');
+  document.getElementById('file-save-modal').classList.add('show');
+}
+
+function closeFileSaveModal() {
+  document.getElementById('file-save-modal').classList.remove('show');
+}
+
+function showFileExportModal() {
+  closeFileSaveModal();
+  document.getElementById('file-export-modal').classList.add('show');
+}
+
+function closeFileExportModal() {
+  document.getElementById('file-export-modal').classList.remove('show');
 }
 
 function confirmSaveName() {
@@ -351,10 +350,54 @@ function renderScriptItem(s) {
       </div>
       <div class="lib-script-actions">
         <button onclick="viewScript(${s.id})">查看</button>
+        <button onclick="exportLibScript(${s.id})">导出</button>
         <button onclick="moveScript(${s.id})">移动</button>
         <button onclick="deleteScript(${s.id})">删除</button>
       </div>
     </div>`;
+}
+
+let _exportingScriptId = null;
+
+function exportLibScript(id) {
+  _exportingScriptId = id;
+  document.getElementById('lib-export-modal').classList.add('show');
+}
+
+function closeLibExportModal() {
+  document.getElementById('lib-export-modal').classList.remove('show');
+}
+
+function exportLibScriptAs(format) {
+  const lib = getLibrary();
+  const s = lib.scripts.find(s => s.id === _exportingScriptId);
+  if (!s) return;
+
+  if (format === 'txt') {
+    const blob = new Blob([s.content], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = s.name + '.txt';
+    a.click();
+    closeLibExportModal();
+    showModal('下载成功！');
+  } else {
+    fetch('http://localhost:8000/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: s.content, format: format, filename: s.name })
+    })
+    .then(res => res.blob())
+    .then(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = s.name + '.' + format;
+      a.click();
+      closeLibExportModal();
+      showModal('下载成功！');
+    })
+    .catch(() => showModal('下载失败，请确认后端服务已启动！'));
+  }
 }
 
 function openFolder(name) {
@@ -423,3 +466,43 @@ function clearFile() {
   document.getElementById('clear-file-btn').style.display = 'none';
 }
 
+function showExportModal() {
+  closeSaveModal();
+  document.getElementById('export-modal').classList.add('show');
+}
+
+function closeExportModal() {
+  document.getElementById('export-modal').classList.remove('show');
+}
+
+function exportAs(format) {
+  const textContent = document.getElementById('output-content') ? document.getElementById('output-content').textContent : '';
+  const fileContent = document.getElementById('file-output-content') ? document.getElementById('file-output-content').textContent : '';
+  const content = _pendingContent || (textContent !== '转换结果将显示在这里...' ? textContent : fileContent);
+  const filename = '剧本_' + new Date().toLocaleDateString();
+  
+  if (format === 'txt') {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename + '.txt';
+    a.click();
+    closeExportModal();
+    closeFileExportModal();
+  } else if (format === 'docx' || format === 'pdf') {
+    fetch('http://localhost:8000/export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: content, format: format, filename: filename })
+    })
+    .then(res => res.blob())
+    .then(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename + '.' + format;
+      a.click();
+      closeExportModal();
+      closeFileExportModal();
+    });
+  }
+}
