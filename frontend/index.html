@@ -352,7 +352,16 @@
       <p style="color:#c8a882;">人物关系图</p>
       <button class="back-btn" onclick="goTo('welcome')">← 返回</button>
       <button class="rel-import-btn" onclick="showRelImportModal()">导入剧本</button>
+      <button class="rel-save-btn" onclick="saveRelationship()">保存</button>
+      <button class="rel-history-btn" onclick="showRelHistory()">我的关系图 ▾</button>
     </header>
+    <div class="modal-overlay" id="rel-history-modal">
+      <div class="modal-box" style="background:#f5ede0;border:2px solid #8B4513;border-radius:16px;width:400px;">
+        <p style="color:#6b3a1f;font-weight:700;">我的关系图</p>
+        <div id="rel-history-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-height:320px;overflow-y:auto;"></div>
+        <button style="background:#c8a882;color:#6b3a1f;margin-top:12px;" class="modal-confirm" onclick="closeRelHistory()">关闭</button>
+      </div>
+    </div>
     
     <div id="relationship-container">
       <div id="script-selector"></div>

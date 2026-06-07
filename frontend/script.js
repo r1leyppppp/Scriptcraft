@@ -958,3 +958,100 @@ function deleteStoryboardHistory(i) {
   localStorage.setItem('storyboardHistory', JSON.stringify(history));
   showStoryboardHistory();
 }
+
+// ===== 人物关系保存 =====
+function saveRelationship() {
+  const svg = document.querySelector('#relationship-graph svg');
+  if (!svg) {
+    showModal('请先生成人物关系图！');
+    return;
+  }
+  const name = '人物关系_' + new Date().toLocaleDateString();
+  const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${svg.getAttribute('width') || 800}" height="${svg.getAttribute('height') || 500}">
+  <style>text { font-family: sans-serif; }</style>
+  ${svg.innerHTML}
+</svg>`;
+  // 存历史
+  const history = JSON.parse(localStorage.getItem('relationshipHistory') || '[]');
+  history.unshift({ name, date: new Date().toLocaleString(), svg: svgContent });
+  localStorage.setItem('relationshipHistory', JSON.stringify(history));
+
+  // 转PNG下载
+  const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = svg.getAttribute('width') || 800;
+    canvas.height = svg.getAttribute('height') || 500;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#f5ede0';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+    const a = document.createElement('a');
+    a.download = name + '.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    URL.revokeObjectURL(url);
+    showModal('保存成功！');
+  };
+  img.src = url;
+}
+
+function showRelHistory() {
+  const history = JSON.parse(localStorage.getItem('relationshipHistory') || '[]');
+  const container = document.getElementById('rel-history-list');
+  if (!history.length) {
+    container.innerHTML = '<p style="color:#8B4513;text-align:center;padding:20px;">暂无保存记录</p>';
+  } else {
+    container.innerHTML = history.map((item, i) => `
+      <div style="background:#f5ede0;border:1px solid #8B4513;border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="color:#6b3a1f;font-size:13px;font-weight:600;">${item.name}</div>
+          <div style="color:#8B4513;font-size:11px;margin-top:4px;">${item.date}</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="downloadRelHistory(${i})" style="background:#8B4513;color:#f5ede0;border:none;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;">下载</button>
+          <button onclick="deleteRelHistory(${i})" style="background:#f5ede0;color:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;">删除</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('rel-history-modal').classList.add('show');
+}
+
+function closeRelHistory() {
+  document.getElementById('rel-history-modal').classList.remove('show');
+}
+
+function downloadRelHistory(i) {
+  const history = JSON.parse(localStorage.getItem('relationshipHistory') || '[]');
+  const item = history[i];
+  const svg = new DOMParser().parseFromString(item.svg, 'image/svg+xml').documentElement;
+  const fixedSvg = item.svg.replace(/font-family="[^"]*"/g, 'font-family="sans-serif"');
+  const svgBlob = new Blob([fixedSvg], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = svg.getAttribute('width') || 800;
+    canvas.height = svg.getAttribute('height') || 500;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#f5ede0';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+    const a = document.createElement('a');
+    a.download = item.name + '.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  img.src = url;
+}
+
+function deleteRelHistory(i) {
+  const history = JSON.parse(localStorage.getItem('relationshipHistory') || '[]');
+  history.splice(i, 1);
+  localStorage.setItem('relationshipHistory', JSON.stringify(history));
+  showRelHistory();
+}

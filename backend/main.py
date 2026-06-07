@@ -249,3 +249,32 @@ shots:
         ]
     )
     return {"result": response.choices[0].message.content}
+
+class SvgExportInput(BaseModel):
+    svg: str
+    filename: str
+
+@app.post("/export-svg")
+async def export_svg(input: SvgExportInput):
+    try:
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
+        c = canvas.Canvas(tmp.name, pagesize=A4)
+        width, height = A4
+        c.setFont("Helvetica", 10)
+        lines = input.svg.split('\n')
+        y = height - 40
+        for line in lines:
+            if y < 40:
+                c.showPage()
+                y = height - 40
+            c.drawString(40, y, line[:100])
+            y -= 14
+        c.save()
+        return StreamingResponse(
+            open(tmp.name, 'rb'),
+            media_type='application/pdf',
+            headers={'Content-Disposition': f'attachment; filename=relationship.pdf'}
+        )
+    except Exception as e:
+        print(f"SVG导出错误: {e}")
+        return {"error": str(e)}

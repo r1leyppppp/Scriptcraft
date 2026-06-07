@@ -1151,3 +1151,40 @@ pre { white-space: pre-wrap; word-break: break-all; }
   background: #a8cdd8;
   color: #0a0f1a;
 }
+
+.rel-save-btn {
+  position: absolute;
+  right: 310px;
+  top: 12px;
+  padding: 6px 14px;
+  background: #8B4513;
+  border: none;
+  border-radius: 20px;
+  color: #f5ede0;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.rel-save-btn:hover { opacity: 0.85; }
+
+.rel-history-btn {
+  position: absolute;
+  right: 190px;  
+  top: 12px;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1.5px solid #ffffff;
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Microsoft YaHei', sans-serif;
+  transition: all 0.2s;
+}
+
+.rel-history-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
