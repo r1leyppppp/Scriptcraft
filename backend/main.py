@@ -28,7 +28,7 @@ class NovelInput(BaseModel):
 @app.post("/convert")
 async def convert(input: NovelInput):
     client = OpenAI(
-        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
+        api_key=os.environ.get("ALIBABA_API_KEY"),
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
     response = client.chat.completions.create(
@@ -67,7 +67,7 @@ class EditInput(BaseModel):
 @app.post("/edit")
 async def edit(input: EditInput):
     client = OpenAI(
-        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
+        api_key=os.environ.get("ALIBABA_API_KEY"),
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
     response = client.chat.completions.create(
