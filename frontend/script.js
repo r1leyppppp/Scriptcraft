@@ -51,7 +51,8 @@ async function convertText() {
   if (!text) { showModal('请先输入小说内容！'); return; }
   convertBtn.textContent = '转换中...';
   convertBtn.disabled = true;
-  outputContent.textContent = '正在生成剧本，请稍候...';
+  outputContent.value = '正在生成剧本，请稍候...';
+  outputContent.disabled = true;
   try {
     const response = await fetch('http://localhost:8000/convert', {
       method: 'POST',
@@ -59,17 +60,17 @@ async function convertText() {
       body: JSON.stringify({ text, style: selectedStyle })
     });
     const data = await response.json();
-    outputContent.textContent = data.result;
+    outputContent.value = data.result;
     generateCharacterCards(data.result, 'character-cards');
     generateReview(data.result, 'review-content');
   } catch (error) {
-    outputContent.textContent = '请求失败，请确认后端服务已启动。';
+    outputContent.value = '请求失败，请确认后端服务已启动。';
   } finally {
     convertBtn.textContent = '开始转换';
     convertBtn.disabled = false;
+    outputContent.disabled = false;
   }
 }
-
 function copyOutput() {
   const outputContent = document.getElementById('output-content');
   const copyBtn = document.getElementById('copy-btn');
@@ -384,11 +385,11 @@ function exportLibScriptAs(format) {
   const s = lib.scripts.find(s => s.id === _exportingScriptId);
   if (!s) return;
 
-  if (format === 'txt') {
+  if (format === 'txt' || format === 'yaml') {
     const blob = new Blob([s.content], { type: 'text/plain' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = s.name + '.txt';
+    a.download = s.name + (format === 'yaml' ? '.yaml' : '.txt');
     a.click();
     closeLibExportModal();
     showModal('下载成功！');
@@ -494,12 +495,12 @@ function exportAs(format) {
   const fileContent = document.getElementById('file-output-content') ? document.getElementById('file-output-content').textContent : '';
   const content = _pendingContent || (textContent !== '转换结果将显示在这里...' ? textContent : fileContent);
   const filename = '剧本_' + new Date().toLocaleDateString();
-  
-  if (format === 'txt') {
+
+  if (format === 'txt' || format === 'yaml') {
     const blob = new Blob([content], { type: 'text/plain' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = filename + '.txt';
+    a.download = filename + (format === 'yaml' ? '.yaml' : '.txt');
     a.click();
     closeExportModal();
     closeFileExportModal();
@@ -746,7 +747,7 @@ function storyboardFromDevice() {
     const container = document.getElementById('storyboard-shots');
     container.innerHTML = '<p style="text-align:center;padding:40px;color:#5ba3b8;">正在生成分镜脚本...</p>';
 
-    if (ext === 'txt' || ext === 'yaml' || ext === 'yml') {
+    if (ext === 'txt' || ext === 'yaml') {
       const reader = new FileReader();
       reader.onload = (ev) => {
         fetch('http://localhost:8000/storyboard', {
