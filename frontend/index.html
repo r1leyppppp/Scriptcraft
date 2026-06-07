@@ -150,7 +150,7 @@
           <div class="tab" onclick="switchTab(this, 'review')">评价建议</div>
           <div class="panel-actions" style="margin-left:auto;padding:4px 8px;">
             <button id="copy-btn" onclick="copyOutput()">复制</button>
-            <button id="save-btn" onclick="saveScript()">保存</button>
+            <button id="save-btn" onclick="handleSave()">保存</button>
           </div>
         </div>
         <div class="tab-content" id="tab-script">
@@ -238,7 +238,7 @@
           </div>
           <div class="panel-actions" style="padding-right:8px;">
             <button id="file-copy-btn" onclick="copyFileOutput()">复制</button>
-            <button id="file-save-btn" onclick="saveFileScript()">保存</button>
+            <button id="file-save-btn" onclick="handleFileSave()">保存</button>
           </div>
         </div>
         <div class="tab-content" id="tab-file-script">
@@ -296,32 +296,80 @@
       <pre id="view-script-content" style="white-space:pre-wrap;word-break:break-all;font-size:14px;line-height:1.8;color:#1f2937;background:#fff;padding:24px;border-radius:12px;border:1px solid #e0e0e0;overflow-x:hidden;width:100%;box-sizing:border-box;"></pre>
     </div>
   </div>
-
-  <div id="library-page" class="page">
-    <button class="back-btn" onclick="goTo('welcome')">← 返回</button>
-    <header>
+  <div id="view-card-page" class="page" style="background:#f8faff;min-height:100vh;">
+    <header style="background:#7194c6;border-bottom:1px solid #4a72b0;">
       <h1>ScriptCraft</h1>
-      <p>剧本库</p>
+      <p id="view-card-title">人物卡详情</p>
+      <button class="back-btn" onclick="goTo('character-card')">← 返回</button>
     </header>
-    <div id="library-container">
-      <div id="library-toolbar">
-        <button onclick="createFolder()">📁 新建文件夹</button>
-        <span id="current-path">全部剧本</span>
-      </div>
-      <div id="library-content"></div>
+    <div style="max-width:900px;margin:0 auto;padding:24px;">
+      <div id="view-card-content"></div>
     </div>
-    <div class="modal-overlay" id="lib-export-modal">
-      <div class="modal-box">
-        <p>选择导出格式</p>
-        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
-          <button class="modal-confirm" onclick="exportLibScriptAs('txt')">TXT</button>
-          <button class="modal-confirm" onclick="exportLibScriptAs('docx')">Word (.docx)</button>
-          <button class="modal-confirm" onclick="exportLibScriptAs('pdf')">PDF</button>
-          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeLibExportModal()">取消</button>
-        </div>
+  </div>
+  <div id="character-card-page" class="page">
+  <button class="back-btn" onclick="goTo('welcome')">← 返回</button>
+  <header>
+    <h1>ScriptCraft</h1>
+    <p>人物卡库</p>
+  </header>
+  <div id="card-library-container" style="max-width:900px;margin:0 auto;padding:24px;">
+    <div id="card-library-content"></div>
+  </div>
+</div>
+
+
+  
+  <div id="library-page" class="page">
+  <button class="back-btn" onclick="goTo('welcome')">← 返回</button>
+  <header>
+    <h1>ScriptCraft</h1>
+    <p>剧本库</p>
+  </header>
+  <div id="library-container">
+    <div id="library-toolbar">
+      <button onclick="createFolder()">📁 新建文件夹</button>
+      <span id="current-path">全部剧本</span>
+    </div>
+    <div id="library-content"></div>
+  </div>
+  <div class="modal-overlay" id="lib-export-modal">
+    <div class="modal-box">
+      <p>选择导出格式</p>
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+        <button class="modal-confirm" onclick="exportLibScriptAs('txt')">TXT</button>
+        <button class="modal-confirm" onclick="exportLibScriptAs('docx')">Word (.docx)</button>
+        <button class="modal-confirm" onclick="exportLibScriptAs('pdf')">PDF</button>
+        <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeLibExportModal()">取消</button>
       </div>
     </div>
   </div>
+  <div class="modal-overlay" id="folder-name-modal">
+    <div class="modal-box">
+      <p>文件夹名称</p>
+      <input type="text" id="folder-name-input" placeholder="输入文件夹名称" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;margin-bottom:16px;outline:none;font-family:'Microsoft YaHei',sans-serif;">
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="modal-confirm" onclick="confirmCreateFolder()">确认</button>
+        <button style="background:#e0e0e0;color:#333;" class="modal-confirm" onclick="closeFolderNameModal()">取消</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="move-script-modal">
+    <div class="modal-box">
+      <p>移动到哪个文件夹？</p>
+      <div id="move-folder-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-height:300px;overflow-y:auto;"></div>
+      <button style="background:#e0e0e0;color:#333;margin-top:12px;" class="modal-confirm" onclick="closeMoveModal()">取消</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="delete-script-modal">
+    <div class="modal-box">
+      <p>确认删除？</p>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="modal-confirm" onclick="confirmDeleteScript()">确认</button>
+        <button style="background:#e0e0e0;color:#333;" class="modal-confirm" onclick="closeDeleteModal()">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <div id="relationship-page" class="page">
     <header style="background:#2e2013; border-bottom:1px solid #3d2800;">
@@ -432,9 +480,21 @@
       <div class="drawer-item" onclick="goTo('storyboard'); hideDrawer()">
         <span>分镜脚本</span>
       </div>
+      <div class="drawer-item" onclick="goTo('character-card'); hideDrawer()">
+        <span>人物卡库</span>
+      </div>
     </div>
   </div>
-
+  <div class="modal-overlay" id="card-name-modal">
+    <div class="modal-box">
+      <p>给人物卡起个名字</p>
+      <input type="text" id="card-name-input" placeholder="未命名人物卡" style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;margin-bottom:16px;outline:none;font-family:'Microsoft YaHei',sans-serif;">
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button class="modal-confirm" onclick="confirmCardName()">确认</button>
+        <button style="background:#e0e0e0;color:#333;" class="modal-confirm" onclick="closeCardNameModal()">取消</button>
+      </div>
+    </div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>

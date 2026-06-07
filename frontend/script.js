@@ -2,6 +2,7 @@ function goTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(page + '-page').classList.add('active');
   if (page === 'library') renderLibrary();
+  if (page === 'character-card') renderCardLibrary();
   if (page === 'relationship') {
   const lib = getLibrary();
   const container = document.getElementById('script-selector');
@@ -309,12 +310,8 @@ function closeNameModal() {
   document.getElementById('name-modal').classList.remove('show');
 }
 function createFolder() {
-  const name = prompt('文件夹名称：');
-  if (!name) return;
-  const lib = getLibrary();
-  lib.folders[name] = [];
-  saveLibrary(lib);
-  renderLibrary();
+  document.getElementById('folder-name-input').value = '';
+  document.getElementById('folder-name-modal').classList.add('show');
 }
 
 let currentFolder = null;
@@ -331,10 +328,11 @@ function renderLibrary() {
     Object.keys(lib.folders).forEach(fname => {
       const count = lib.scripts.filter(s => s.folder === fname).length;
       html += `
-        <div class="lib-folder" onclick="openFolder('${fname}')">
-          <span class="lib-icon">📁</span>
-          <span class="lib-name">${fname}</span>
+        <div class="lib-folder">
+          <span class="lib-icon" onclick="openFolder('${fname}')">📁</span>
+          <span class="lib-name" onclick="openFolder('${fname}')">${fname}</span>
           <span class="lib-meta">${count} 个剧本</span>
+          <button onclick="deleteFolder('${fname}')" style="margin-left:auto;padding:4px 12px;border:1.5px solid #e0e0e0;border-radius:12px;background:#fff;font-size:12px;cursor:pointer;color:#ef4444;border-color:#ef4444;">删除</button>
         </div>`;
     });
     // 显示未分类剧本
@@ -435,21 +433,22 @@ function viewScript(id) {
 function moveScript(id) {
   const lib = getLibrary();
   const folders = Object.keys(lib.folders);
-  if (!folders.length) { alert('请先创建文件夹！'); return; }
-  const fname = prompt('移动到哪个文件夹？\n' + folders.join('\n'));
-  if (!fname || !lib.folders.hasOwnProperty(fname)) return;
-  const s = lib.scripts.find(s => s.id === id);
-  if (s) s.folder = fname;
-  saveLibrary(lib);
-  renderLibrary();
+  if (!folders.length) { showModal('请先创建文件夹！'); return; }
+  _pendingMoveId = id;
+  const container = document.getElementById('move-folder-list');
+  container.innerHTML = `
+    <button class="script-select-btn" onclick="confirmMoveScript(null)" style="color:#6b7280;border-color:#e0e0e0;">未分类</button>
+    ${folders.map(fname => `
+      <button class="script-select-btn" onclick="confirmMoveScript('${fname}')">${fname}</button>
+    `).join('')}
+  `;
+  document.getElementById('move-script-modal').classList.add('show');
 }
 
 function deleteScript(id) {
-  if (!confirm('确认删除？')) return;
-  const lib = getLibrary();
-  lib.scripts = lib.scripts.filter(s => s.id !== id);
-  saveLibrary(lib);
-  renderLibrary();
+  _pendingDeleteId = id;
+  _pendingDeleteFolder = null;
+  document.getElementById('delete-script-modal').classList.add('show');
 }
 
 function showDrawer() {
@@ -1056,4 +1055,181 @@ function deleteRelHistory(i) {
   history.splice(i, 1);
   localStorage.setItem('relationshipHistory', JSON.stringify(history));
   showRelHistory();
+}
+function handleSave() {
+  const activeTab = document.querySelector('.tab.active');
+  const tabText = activeTab ? activeTab.textContent.trim() : '';
+  if (tabText === '人物卡') {
+    saveCardToLibrary('character-cards');
+  } else {
+    saveScript();
+  }
+}
+
+function handleFileSave() {
+  const activeTab = document.querySelector('#file-output-panel .tab.active');
+  const tabText = activeTab ? activeTab.textContent.trim() : '';
+  if (tabText === '人物卡') {
+    saveCardToLibrary('file-character-cards');
+  } else {
+    saveFileScript();
+  }
+}
+
+
+// ===== 人物卡库 =====
+function getCardLibrary() {
+  return JSON.parse(localStorage.getItem('cardLibrary') || '[]');
+}
+
+function saveCardLibrary(lib) {
+  localStorage.setItem('cardLibrary', JSON.stringify(lib));
+}
+
+let _pendingCardHTML = '';
+
+function saveCardToLibrary(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container.querySelector('.character-card')) {
+    showModal('请先生成人物卡！');
+    return;
+  }
+  _pendingCardHTML = container.innerHTML;
+  document.getElementById('card-name-input').value = '';
+  document.getElementById('card-name-modal').classList.add('show');
+}
+
+function confirmCardName() {
+  const name = document.getElementById('card-name-input').value.trim() || '未命名人物卡_' + new Date().toLocaleDateString();
+  const lib = getCardLibrary();
+  lib.push({
+    id: Date.now(),
+    name,
+    html: _pendingCardHTML,
+    date: new Date().toLocaleString()
+  });
+  saveCardLibrary(lib);
+  closeCardNameModal();
+  showModal('已保存到人物卡库！');
+}
+
+function closeCardNameModal() {
+  document.getElementById('card-name-modal').classList.remove('show');
+}
+
+function renderCardLibrary() {
+  const lib = getCardLibrary();
+  const container = document.getElementById('card-library-content');
+  if (!lib.length) {
+    container.innerHTML = '<div class="lib-empty">还没有保存的人物卡</div>';
+    return;
+  }
+  container.innerHTML = lib.map((item, i) => `
+    <div class="lib-script">
+      <div class="lib-script-header">
+        <span class="lib-icon">👤</span>
+        <span class="lib-name">${item.name}</span>
+        <span class="lib-meta">${item.date}</span>
+      </div>
+      <div class="lib-script-actions">
+        <button onclick="viewCardItem(${i})">查看</button>
+        <button onclick="exportCardItem(${i})">导出PDF</button>
+        <button onclick="deleteCardItem(${i})">删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function viewCardItem(i) {
+  const lib = getCardLibrary();
+  const item = lib[i];
+  document.getElementById('view-card-title').textContent = item.name;
+  document.getElementById('view-card-content').innerHTML = item.html;
+  goTo('view-card');
+}
+
+function exportCardItem(i) {
+  const lib = getCardLibrary();
+  const item = lib[i];
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html><head><title>${item.name}</title>
+    <style>
+      body { font-family: 'Microsoft YaHei', sans-serif; padding: 40px; background: #fff; }
+      .character-card { border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; margin-bottom: 16px; display: flex; gap: 16px; }
+      .character-avatar { width: 56px; height: 56px; border-radius: 50%; background: #7194c6; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 700; flex-shrink: 0; }
+      .character-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #1f2937; }
+      .character-tag { display: inline-block; padding: 2px 10px; background: #e8f0ff; color: #4a72b0; border-radius: 12px; font-size: 12px; margin-right: 6px; }
+      .character-desc { font-size: 13px; color: #6b7280; line-height: 1.6; margin-top: 8px; }
+    </style>
+    </head><body>${item.html}</body></html>
+  `);
+  printWindow.document.close();
+  printWindow.onload = () => {
+    printWindow.print();
+    printWindow.close();
+  };
+}
+
+function deleteCardItem(i) {
+  const lib = getCardLibrary();
+  lib.splice(i, 1);
+  saveCardLibrary(lib);
+  renderCardLibrary();
+}
+let _pendingDeleteFolder = null;
+
+function deleteFolder(name) {
+  _pendingDeleteFolder = name;
+  document.getElementById('delete-script-modal').classList.add('show');
+}
+
+let _pendingMoveId = null;
+let _pendingDeleteId = null;
+
+function confirmMoveScript(fname) {
+  const lib = getLibrary();
+  const s = lib.scripts.find(s => s.id === _pendingMoveId);
+  if (s) s.folder = fname;
+  saveLibrary(lib);
+  renderLibrary();
+  closeMoveModal();
+}
+
+function closeMoveModal() {
+  document.getElementById('move-script-modal').classList.remove('show');
+}
+
+function confirmDeleteScript() {
+  if (_pendingDeleteFolder !== null) {
+    const lib = getLibrary();
+    lib.scripts.forEach(s => { if (s.folder === _pendingDeleteFolder) s.folder = null; });
+    delete lib.folders[_pendingDeleteFolder];
+    saveLibrary(lib);
+    _pendingDeleteFolder = null;
+  } else {
+    const lib = getLibrary();
+    lib.scripts = lib.scripts.filter(s => s.id !== _pendingDeleteId);
+    saveLibrary(lib);
+  }
+  renderLibrary();
+  closeDeleteModal();
+}
+
+function closeDeleteModal() {
+  document.getElementById('delete-script-modal').classList.remove('show');
+}
+
+function confirmCreateFolder() {
+  const name = document.getElementById('folder-name-input').value.trim();
+  if (!name) { showModal('请输入文件夹名称！'); return; }
+  const lib = getLibrary();
+  lib.folders[name] = [];
+  saveLibrary(lib);
+  renderLibrary();
+  closeFolderNameModal();
+}
+
+function closeFolderNameModal() {
+  document.getElementById('folder-name-modal').classList.remove('show');
 }
