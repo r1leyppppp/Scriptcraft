@@ -51,6 +51,7 @@ async function convertText() {
     const data = await response.json();
     outputContent.textContent = data.result;
     generateCharacterCards(data.result, 'character-cards');
+    generateReview(data.result, 'review-content');
   } catch (error) {
     outputContent.textContent = '请求失败，请确认后端服务已启动。';
   } finally {
@@ -111,6 +112,7 @@ async function convertFile() {
     const data = await response.json();
     fileOutputContent.textContent = data.result;
     generateCharacterCards(data.result, 'file-character-cards');
+    generateReview(data.result, 'file-review-content');
   } catch (error) {
     fileOutputContent.textContent = '请求失败，请确认后端服务已启动。';
   } finally {
@@ -549,4 +551,45 @@ function generateCharacterCards(yamlText, containerId) {
       </div>
     </div>
   `).join('');
+}
+
+async function generateReview(script, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '<p style="color:#9ca3af;padding:20px;">正在生成评价...</p>';
+  try {
+    const response = await fetch('http://localhost:8000/review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ script: script })
+    });
+    const data = await response.json();
+    const text = data.result.replace(/```json|```/g, '').trim();
+    const review = JSON.parse(text);
+    
+    container.innerHTML = `
+      <div style="padding:20px;">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+          <div style="width:60px;height:60px;border-radius:50%;background:#7194c6;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:700;flex-shrink:0;">${review.score}</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#1f2937;">综合评分</div>
+            <div style="font-size:13px;color:#6b7280;">${review.overall}</div>
+          </div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="font-size:15px;font-weight:700;color:#22c55e;margin-bottom:8px;">✓ 优点</div>
+          ${review.strengths.map(s => `<div style="font-size:13px;color:#374151;padding:6px 0;border-bottom:1px solid #f3f4f6;">• ${s}</div>`).join('')}
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="font-size:15px;font-weight:700;color:#ef4444;margin-bottom:8px;">✗ 不足</div>
+          ${review.weaknesses.map(w => `<div style="font-size:13px;color:#374151;padding:6px 0;border-bottom:1px solid #f3f4f6;">• ${w}</div>`).join('')}
+        </div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#7194c6;margin-bottom:8px;">💡 建议</div>
+          ${review.suggestions.map(s => `<div style="font-size:13px;color:#374151;padding:6px 0;border-bottom:1px solid #f3f4f6;">• ${s}</div>`).join('')}
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    container.innerHTML = '<p style="color:#9ca3af;padding:20px;">评价生成失败</p>';
+  }
 }

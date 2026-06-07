@@ -144,3 +144,36 @@ async def export_file(input: ExportInput):
     except Exception as e:
         print(f"导出错误: {e}")
         return {"error": str(e)}
+    
+
+class ReviewInput(BaseModel):
+    script: str
+
+@app.post("/review")
+async def review_script(input: ReviewInput):
+    client = OpenAI(
+        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
+    response = client.chat.completions.create(
+        model="qwen-plus",
+        messages=[
+            {
+                "role": "user",
+                "content": f"""你是一位专业的剧本评审导师。请对以下剧本进行专业评价，输出JSON格式。
+
+剧本内容：
+{input.script}
+
+请输出以下JSON格式，不要有任何其他文字：
+{{
+  "overall": "总体评价描述",
+  "score": 8,
+  "strengths": ["优点1", "优点2", "优点3"],
+  "weaknesses": ["不足1", "不足2"],
+  "suggestions": ["建议1", "建议2", "建议3"]
+}}"""
+            }
+        ]
+    )
+    return {"result": response.choices[0].message.content}
