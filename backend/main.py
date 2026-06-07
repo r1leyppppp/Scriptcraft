@@ -212,3 +212,40 @@ async def get_relationship(input: RelationshipInput):
         ]
     )
     return {"result": response.choices[0].message.content}
+
+class StoryboardInput(BaseModel):
+    script: str
+@app.post("/storyboard")
+async def generate_storyboard(input: StoryboardInput):
+    client = OpenAI(
+        api_key=os.environ.get("ALIBABA_API_KEY"),
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
+    )
+    response = client.chat.completions.create(
+        model="qwen-plus",
+        messages=[
+            {
+                "role": "user",
+                "content": f"""你是专业的分镜师。根据以下剧本生成分镜脚本，用YAML结构输出。
+
+剧本：
+{input.script}
+
+YAML格式要求：
+shots:
+  - id: 1
+    scene: 场景名
+    shot_type: 全景/中景/近景/特写
+    movement: 固定/推镜/拉镜/摇镜/跟镜
+    description: 画面描述
+    dialogue: 台词（无则留空）
+    duration: 3
+
+只输出YAML内容，不要任何解释文字。
+
+剧本内容：
+{input.script}"""
+            }
+        ]
+    )
+    return {"result": response.choices[0].message.content}
