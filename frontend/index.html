@@ -382,33 +382,56 @@
     <p>分镜脚本</p>
     <button class="back-btn" onclick="goTo('welcome')">← 返回</button>
     <button class="rel-import-btn" onclick="showStoryboardImportModal()">导入剧本</button>
+    <button class="storyboard-save-btn" onclick="showStoryboardSaveModal()">保存</button>
+    <button class="storyboard-history-btn" onclick="showStoryboardHistory()">我的分镜 ▾</button>
   </header>
 
   <div id="storyboard-container">
     <div id="storyboard-shots">
-      <p style="text-align:center;padding:60px;color:#9ca3af;">请先导入剧本生成分镜</p>
+      <p style="text-align:center;padding:60px;color:#5ba3b8;">请先导入剧本生成分镜</p>
     </div>
   </div>
 
   <div class="modal-overlay" id="storyboard-import-modal">
-    <div class="modal-box">
-      <p>选择导入来源</p>
+    <div class="modal-box" style="background:#1a2535;border:1.5px solid #1f3040;">
+      <p style="color:#d1e8f0;">选择导入来源</p>
       <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
-        <button class="modal-confirm" onclick="storyboardFromDevice()">从此设备导入</button>
-        <button class="modal-confirm" onclick="storyboardFromLibrary()">从剧本库导入</button>
-        <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeStoryboardImportModal()">取消</button>
+        <button class="modal-confirm" style="background:#1f3040;color:#a8cdd8;border:1.5px solid #a8cdd8;" onclick="storyboardFromDevice()">从此设备导入</button>
+        <button class="modal-confirm" style="background:#1f3040;color:#a8cdd8;border:1.5px solid #a8cdd8;" onclick="storyboardFromLibrary()">从剧本库导入</button>
+        <button style="background:#0a0f1a;color:#a8cdd8;border:1.5px solid #1f3040;" class="modal-confirm" onclick="closeStoryboardImportModal()">取消</button>
       </div>
     </div>
   </div>
 
   <div class="modal-overlay" id="storyboard-script-list-modal">
-    <div class="modal-box">
-      <p>选择剧本</p>
+    <div class="modal-box" style="background:#1a2535;border:1.5px solid #1f3040;">
+      <p style="color:#d1e8f0;">选择剧本</p>
       <div id="storyboard-script-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-height:300px;overflow-y:auto;"></div>
-      <button style="background:#e0e0e0;color:#333;margin-top:12px;" class="modal-confirm" onclick="closeStoryboardScriptList()">取消</button>
+      <button style="background:#0a0f1a;color:#a8cdd8;border:1.5px solid #1f3040;margin-top:12px;" class="modal-confirm" onclick="closeStoryboardScriptList()">取消</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="storyboard-save-modal">
+    <div class="modal-box" style="background:#1a2535;border:1.5px solid #1f3040;">
+      <p style="color:#d1e8f0;">选择保存格式</p>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+        <button class="modal-confirm" style="background:#1f3040;color:#a8cdd8;border:1.5px solid #a8cdd8;" onclick="saveStoryboard('yaml')">YAML</button>
+        <button class="modal-confirm" style="background:#1f3040;color:#a8cdd8;border:1.5px solid #a8cdd8;" onclick="saveStoryboard('docx')">Word (.docx)</button>
+        <button class="modal-confirm" style="background:#1f3040;color:#a8cdd8;border:1.5px solid #a8cdd8;" onclick="saveStoryboard('pdf')">PDF</button>
+        <button style="background:#0a0f1a;color:#a8cdd8;border:1.5px solid #1f3040;" class="modal-confirm" onclick="closeStoryboardSaveModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="storyboard-history-modal">
+    <div class="modal-box" style="background:#1a2535;border:1.5px solid #1f3040;width:400px;">
+      <p style="color:#d1e8f0;">我的分镜</p>
+      <div id="storyboard-history-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;max-height:320px;overflow-y:auto;"></div>
+      <button style="background:#0a0f1a;color:#a8cdd8;border:1.5px solid #1f3040;margin-top:12px;" class="modal-confirm" onclick="closeStoryboardHistory()">关闭</button>
     </div>
   </div>
 </div>
+
   <div id="bottom-drawer-hint" onclick="showDrawer()"></div>
   <div id="bottom-drawer">
     <div class="drawer-handle" onclick="hideDrawer()"></div>
