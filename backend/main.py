@@ -3,6 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
 import os
+from docx import Document
+import pypdf
+import io
+from fastapi import UploadFile, File
 
 app = FastAPI()
 
@@ -19,7 +23,7 @@ class NovelInput(BaseModel):
 @app.post("/convert")
 async def convert(input: NovelInput):
     client = OpenAI(
-        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
+        api_key=os.environ.get("ALIBABA_API_KEY"),
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
     
@@ -83,3 +87,21 @@ async def edit(input: EditInput):
     )
     
     return {"result": response.choices[0].message.content}
+
+@app.post("/parse-file")
+async def parse_file(file: UploadFile = File(...)):
+    content = await file.read()
+    filename = file.filename.lower()
+    
+    if filename.endswith('.txt'):
+        text = content.decode('utf-8', errors='ignore')
+    elif filename.endswith('.docx'):
+        doc = Document(io.BytesIO(content))
+        text = '\n'.join([para.text for para in doc.paragraphs])
+    elif filename.endswith('.pdf'):
+        reader = pypdf.PdfReader(io.BytesIO(content))
+        text = '\n'.join([page.extract_text() for page in reader.pages])
+    else:
+        return {"error": "不支持的文件格式"}
+    
+    return {"text": text}
