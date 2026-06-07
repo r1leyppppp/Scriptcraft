@@ -172,9 +172,20 @@
       <div class="modal-box">
         <p>选择保存方式</p>
         <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
-          <button class="modal-confirm" onclick="saveToDevice()">💾 保存到设备</button>
+          <button class="modal-confirm" onclick="showExportModal()">💾 保存到设备</button>
           <button class="modal-confirm" onclick="saveToLibrary(); closeSaveModal()">📚 保存到剧本库</button>
           <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeSaveModal()">取消</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="export-modal">
+      <div class="modal-box">
+        <p>选择导出格式</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <button class="modal-confirm" onclick="exportAs('txt')">TXT</button>
+          <button class="modal-confirm" onclick="exportAs('docx')">Word (.docx)</button>
+          <button class="modal-confirm" onclick="exportAs('pdf')">PDF</button>
+          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeExportModal()">取消</button>
         </div>
       </div>
     </div>
@@ -221,6 +232,27 @@
         </div>
       </div>
     </main>
+    <div class="modal-overlay" id="file-save-modal">
+      <div class="modal-box">
+        <p>选择保存方式</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <button class="modal-confirm" onclick="showFileExportModal()">💾 保存到设备</button>
+          <button class="modal-confirm" onclick="saveToLibrary(); closeFileSaveModal()">📚 保存到剧本库</button>
+          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeFileSaveModal()">取消</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="file-export-modal">
+      <div class="modal-box">
+        <p>选择导出格式</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <button class="modal-confirm" onclick="exportAs('txt')">TXT</button>
+          <button class="modal-confirm" onclick="exportAs('docx')">Word (.docx)</button>
+          <button class="modal-confirm" onclick="exportAs('pdf')">PDF</button>
+          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeFileExportModal()">取消</button>
+        </div>
+      </div>
+    </div>
     <div class="modal-overlay" id="file-modal">
       <div class="modal-box">
         <p id="file-modal-msg">提示</p>
@@ -241,6 +273,17 @@
         <span id="current-path">全部剧本</span>
       </div>
       <div id="library-content"></div>
+    </div>
+    <div class="modal-overlay" id="lib-export-modal">
+      <div class="modal-box">
+        <p>选择导出格式</p>
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:8px;">
+          <button class="modal-confirm" onclick="exportLibScriptAs('txt')">TXT</button>
+          <button class="modal-confirm" onclick="exportLibScriptAs('docx')">Word (.docx)</button>
+          <button class="modal-confirm" onclick="exportLibScriptAs('pdf')">PDF</button>
+          <button style="background:#e0e0e0; color:#333;" class="modal-confirm" onclick="closeLibExportModal()">取消</button>
+        </div>
+      </div>
     </div>
   </div>
 

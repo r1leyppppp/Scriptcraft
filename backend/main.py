@@ -7,6 +7,11 @@ from docx import Document
 import pypdf
 import io
 from fastapi import UploadFile, File
+from fastapi.responses import StreamingResponse
+from docx import Document as DocxDocument
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+import tempfile
 
 app = FastAPI()
 
@@ -23,10 +28,9 @@ class NovelInput(BaseModel):
 @app.post("/convert")
 async def convert(input: NovelInput):
     client = OpenAI(
-        api_key=os.environ.get("ALIBABA_API_KEY"),
+        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
-    
     response = client.chat.completions.create(
         model="qwen-plus",
         messages=[
@@ -54,7 +58,6 @@ YAML格式要求：
             }
         ]
     )
-    
     return {"result": response.choices[0].message.content}
 
 class EditInput(BaseModel):
@@ -64,10 +67,9 @@ class EditInput(BaseModel):
 @app.post("/edit")
 async def edit(input: EditInput):
     client = OpenAI(
-        api_key=os.environ.get("ALIBABA_API_KEY"),
+        api_key="sk-6b247cd4504c49d99a8d25347569ed6a",
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
-    
     response = client.chat.completions.create(
         model="qwen-plus",
         messages=[
@@ -85,14 +87,12 @@ async def edit(input: EditInput):
             }
         ]
     )
-    
     return {"result": response.choices[0].message.content}
 
 @app.post("/parse-file")
 async def parse_file(file: UploadFile = File(...)):
     content = await file.read()
     filename = file.filename.lower()
-    
     if filename.endswith('.txt'):
         text = content.decode('utf-8', errors='ignore')
     elif filename.endswith('.docx'):
@@ -103,5 +103,44 @@ async def parse_file(file: UploadFile = File(...)):
         text = '\n'.join([page.extract_text() for page in reader.pages])
     else:
         return {"error": "不支持的文件格式"}
-    
     return {"text": text}
+
+class ExportInput(BaseModel):
+    content: str
+    format: str
+    filename: str
+
+@app.post("/export")
+async def export_file(input: ExportInput):
+    try:
+        if input.format == 'docx':
+            doc = DocxDocument()
+            for line in input.content.split('\n'):
+                doc.add_paragraph(line)
+            tmp = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+            doc.save(tmp.name)
+            return StreamingResponse(
+                open(tmp.name, 'rb'),
+                media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                headers={'Content-Disposition': 'attachment; filename=script.docx'}
+            )
+        elif input.format == 'pdf':
+            tmp = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
+            c = canvas.Canvas(tmp.name, pagesize=A4)
+            width, height = A4
+            y = height - 40
+            for line in input.content.split('\n'):
+                if y < 40:
+                    c.showPage()
+                    y = height - 40
+                c.drawString(40, y, line)
+                y -= 15
+            c.save()
+            return StreamingResponse(
+                open(tmp.name, 'rb'),
+                media_type='application/pdf',
+                headers={'Content-Disposition': 'attachment; filename=script.pdf'}
+            )
+    except Exception as e:
+        print(f"导出错误: {e}")
+        return {"error": str(e)}
