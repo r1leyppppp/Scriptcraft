@@ -732,3 +732,113 @@ function showRelScriptList() {
 function closeRelScriptList() {
   document.getElementById('rel-script-list-modal').classList.remove('show');
 }
+
+function storyboardFromDevice() {
+  closeStoryboardImportModal();
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.yaml,.yml';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const container = document.getElementById('storyboard-shots');
+      container.innerHTML = '<p style="text-align:center;padding:40px;color:#9ca3af;">正在生成分镜脚本...</p>';
+      fetch('http://localhost:8000/storyboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ script: ev.target.result })
+      })
+      .then(res => res.json())
+      .then(data => renderStoryboard(data.result))
+      .catch(() => {
+        container.innerHTML = '<p style="text-align:center;padding:40px;color:#ef4444;">生成失败，请确认后端已启动</p>';
+      });
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function showStoryboardImportModal() {
+  document.getElementById('storyboard-import-modal').classList.add('show');
+}
+function closeStoryboardImportModal() {
+  document.getElementById('storyboard-import-modal').classList.remove('show');
+}
+function storyboardFromLibrary() {
+  closeStoryboardImportModal();
+  const lib = getLibrary();
+  const container = document.getElementById('storyboard-script-list');
+  if (!lib.scripts.length) {
+    container.innerHTML = '<p style="color:#9ca3af;">剧本库为空</p>';
+  } else {
+    container.innerHTML = lib.scripts.map(s => `
+      <button class="script-select-btn" onclick="generateStoryboard(${s.id}); closeStoryboardScriptList();">${s.name}</button>
+    `).join('');
+  }
+  document.getElementById('storyboard-script-list-modal').classList.add('show');
+}
+function closeStoryboardScriptList() {
+  document.getElementById('storyboard-script-list-modal').classList.remove('show');
+}
+
+async function generateStoryboard(id) {
+  const lib = getLibrary();
+  const s = lib.scripts.find(s => s.id === id);
+  if (!s) return;
+  const container = document.getElementById('storyboard-shots');
+  container.innerHTML = '<p style="text-align:center;padding:40px;color:#9ca3af;">正在生成分镜脚本...</p>';
+  try {
+    const response = await fetch('http://localhost:8000/storyboard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ script: s.content })
+    });
+    const data = await response.json();
+    renderStoryboard(data.result);
+  } catch (e) {
+    container.innerHTML = '<p style="text-align:center;padding:40px;color:#ef4444;">生成失败，请确认后端已启动</p>';
+  }
+}
+
+function renderStoryboard(yamlText) {
+  const container = document.getElementById('storyboard-shots');
+  // 解析YAML shots
+  const shots = [];
+  const lines = yamlText.split('\n');
+  let current = null;
+  lines.forEach(line => {
+    if (line.match(/^\s*-\s*id:/)) {
+      if (current) shots.push(current);
+      current = { id: line.replace(/.*id:\s*/, '').trim() };
+    } else if (current) {
+      const fields = ['scene','shot_type','movement','description','dialogue','duration'];
+      fields.forEach(f => {
+        const m = line.match(new RegExp(`^\\s*${f}:\\s*(.+)`));
+        if (m) current[f] = m[1].replace(/^["']|["']$/g, '').trim();
+      });
+    }
+  });
+  if (current) shots.push(current);
+
+  if (!shots.length) {
+    container.innerHTML = '<p style="text-align:center;padding:40px;color:#9ca3af;">未能解析分镜内容</p>';
+    return;
+  }
+
+  container.innerHTML = shots.map(s => `
+    <div class="shot-card">
+      <div class="shot-num">镜头 ${s.id}</div>
+      <div class="shot-scene">${s.scene || ''}</div>
+      <div class="shot-tags">
+        <span class="shot-tag">${s.shot_type || ''}</span>
+        <span class="shot-tag">${s.movement || ''}</span>
+        <span class="shot-tag">${s.duration ? s.duration + '秒' : ''}</span>
+      </div>
+      <div class="shot-desc">${s.description || ''}</div>
+      ${s.dialogue ? `<div class="shot-dialogue">「${s.dialogue}」</div>` : ''}
+    </div>
+  `).join('');
+}
