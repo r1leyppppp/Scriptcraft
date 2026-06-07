@@ -245,8 +245,8 @@ textarea:focus {
 
 .upload-area:hover { background: #e8f0ff; border-color: #4a72b0; }
 .upload-area.uploaded { border-color: #22c55e; background: #f0fdf4; color: #16a34a; }
-.upload-area p { font-size: 15px; margin-bottom: 8px; }
-.upload-area span { font-size: 12px; color: #9ca3af; }
+.upload-area p { font-size: 30px; margin-bottom: 8px; }
+.upload-area span { font-size: 20px; color: #8a99b3; }
 .upload-area input { display: none; }
 
 #file-name { font-size: 13px; color: #6b7280; margin-bottom: 12px; }

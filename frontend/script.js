@@ -86,9 +86,24 @@ function handleFile(event) {
   document.getElementById('file-name').textContent = '已选择：' + file.name;
   document.getElementById('upload-area').classList.add('uploaded');
   document.getElementById('upload-area').querySelector('p').textContent = '✅ ' + file.name;
-  const reader = new FileReader();
-  reader.onload = (e) => { fileText = e.target.result; };
-  reader.readAsText(file);
+  document.getElementById('clear-file-btn').style.display = 'block';
+  const ext = file.name.split('.').pop().toLowerCase();
+  
+  if (ext === 'txt') {
+    const reader = new FileReader();
+    reader.onload = (e) => { fileText = e.target.result; };
+    reader.readAsText(file);
+  } else {
+    const formData = new FormData();
+    formData.append('file', file);
+    fetch('http://localhost:8000/parse-file', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => { fileText = data.text; })
+    .catch(err => console.error(err));
+  }
 }
 
 async function convertFile() {
@@ -398,4 +413,13 @@ document.getElementById('bottom-drawer').addEventListener('mouseleave', (e) => {
     hideDrawer();
   }
 });
+
+function clearFile() {
+  fileText = '';
+  document.getElementById('file-name').textContent = '未选择文件';
+  document.getElementById('upload-area').classList.remove('uploaded');
+  document.getElementById('upload-area').querySelector('p').textContent = '📂 点击上传 .txt 文件';
+  document.getElementById('file-input').value = '';
+  document.getElementById('clear-file-btn').style.display = 'none';
+}
 
